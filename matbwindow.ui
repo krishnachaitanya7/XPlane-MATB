@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MATBWindow</class>
+ <widget class="QMainWindow" name="MATBWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>498</width>
+    <height>547</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MATBWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>0</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="text">
+     <string>Rain %</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>0</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="text">
+     <string>Day/Night</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>0</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="text">
+     <string>Wind %</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="rain_percent">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>50</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit_2">
+    <property name="geometry">
+     <rect>
+      <x>210</x>
+      <y>50</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="wind_percent">
+    <property name="geometry">
+     <rect>
+      <x>110</x>
+      <y>50</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="day_or_night">
+    <property name="geometry">
+     <rect>
+      <x>220</x>
+      <y>70</y>
+      <width>86</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Add_to_list">
+    <property name="geometry">
+     <rect>
+      <x>340</x>
+      <y>70</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Add to List</string>
+    </property>
+   </widget>
+   <widget class="QScrollArea" name="events_list">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>140</y>
+      <width>301</width>
+      <height>331</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="widgetResizable">
+     <bool>true</bool>
+    </property>
+    <widget class="QWidget" name="scrollAreaWidgetContents">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>299</width>
+       <height>329</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QPushButton" name="Gen_script">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>254</y>
+      <width>131</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Generate Script</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>498</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuXPlane_MATB">
+    <property name="title">
+     <string>XPlane MATB</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuDeveloped_in_SHINE_lab">
+    <property name="title">
+     <string>Developed in SHINE lab</string>
+    </property>
+   </widget>
+   <addaction name="menuXPlane_MATB"/>
+   <addaction name="menuDeveloped_in_SHINE_lab"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
