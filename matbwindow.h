@@ -22,6 +22,8 @@ private slots:
 
     void on_Gen_script_clicked();
 
+    void dynamic_buttons_clicked();
+
 private:
     Ui::MATBWindow *ui;
 };
