@@ -6,12 +6,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>498</width>
+    <width>532</width>
     <height>547</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>MATBWindow</string>
+   <string>Xplane MATB</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QLabel" name="label">
@@ -116,46 +116,29 @@ border-radius: 1px;</string>
       <height>25</height>
      </rect>
     </property>
+    <item>
+     <property name="text">
+      <string>Day</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Night</string>
+     </property>
+    </item>
    </widget>
    <widget class="QPushButton" name="Add_to_list">
     <property name="geometry">
      <rect>
-      <x>340</x>
-      <y>70</y>
-      <width>89</width>
-      <height>25</height>
+      <x>420</x>
+      <y>60</y>
+      <width>91</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
      <string>Add to List</string>
     </property>
-   </widget>
-   <widget class="QScrollArea" name="events_list">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>140</y>
-      <width>301</width>
-      <height>331</height>
-     </rect>
-    </property>
-    <property name="styleSheet">
-     <string notr="true">border: 1px solid rgb(60, 60, 60);
-border-radius: 1px;</string>
-    </property>
-    <property name="widgetResizable">
-     <bool>true</bool>
-    </property>
-    <widget class="QWidget" name="scrollAreaWidgetContents">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>0</y>
-       <width>299</width>
-       <height>329</height>
-      </rect>
-     </property>
-    </widget>
    </widget>
    <widget class="QPushButton" name="Gen_script">
     <property name="geometry">
@@ -170,30 +153,114 @@ border-radius: 1px;</string>
      <string>Generate Script</string>
     </property>
    </widget>
+   <widget class="QTextEdit" name="duration_time">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>50</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>0</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="text">
+     <string>Duration?</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="close_button">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>470</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Close</string>
+    </property>
+   </widget>
+   <widget class="QScrollArea" name="events_list">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>150</y>
+      <width>311</width>
+      <height>351</height>
+     </rect>
+    </property>
+    <property name="widgetResizable">
+     <bool>true</bool>
+    </property>
+    <widget class="QWidget" name="scrollAreaWidgetContents">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>309</width>
+       <height>349</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>498</width>
+     <width>532</width>
      <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuXPlane_MATB">
     <property name="title">
-     <string>XPlane MATB</string>
+     <string>File</string>
     </property>
+    <addaction name="actionLoad_Config_File"/>
    </widget>
-   <widget class="QMenu" name="menuDeveloped_in_SHINE_lab">
+   <widget class="QMenu" name="menuAbout">
     <property name="title">
-     <string>Developed in SHINE lab</string>
+     <string>About</string>
     </property>
+    <addaction name="actionXPlane_MATB_Version"/>
    </widget>
    <addaction name="menuXPlane_MATB"/>
-   <addaction name="menuDeveloped_in_SHINE_lab"/>
+   <addaction name="menuAbout"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="action">
+   <property name="text">
+    <string/>
+   </property>
+  </action>
+  <action name="actionLoad_Config_File">
+   <property name="text">
+    <string>Load Config File</string>
+   </property>
+  </action>
+  <action name="actionXPlane_MATB_Version">
+   <property name="text">
+    <string>XPlane MATB Version</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
