@@ -24,8 +24,13 @@ private slots:
 
     void dynamic_buttons_clicked();
 
+    void load_file_clicked(QAction* test);
+
+    void add_buttons_to_list(QString rain_percent, QString wind_percent, QString duration_time, QString time_of_day);
 private:
     Ui::MATBWindow *ui;
+
+
 };
 
 #endif // MATBWINDOW_H

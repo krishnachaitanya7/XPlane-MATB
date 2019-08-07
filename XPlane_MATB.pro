@@ -32,8 +32,7 @@ HEADERS += \
         matbwindow.h
 
 FORMS += \
-        matbwindow.ui \
-    dialog.ui
+        matbwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

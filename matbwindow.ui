@@ -260,6 +260,9 @@ border-radius: 1px;</string>
    <property name="text">
     <string>XPlane MATB Version</string>
    </property>
+   <property name="whatsThis">
+    <string>load_file</string>
+   </property>
   </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>

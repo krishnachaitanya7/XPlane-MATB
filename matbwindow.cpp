@@ -8,6 +8,11 @@
 #include <QFile>
 #include <QIODevice>
 #include <QTextStream>
+#include <QInputDialog>
+#include <regex>
+#include <QMenu>
+#include <QFileDialog>
+#include <fstream>
 
 // Start Global Static Variables
 static QVBoxLayout *test;
@@ -16,6 +21,16 @@ static QWidget *my_button_window;
 
 //Important Links
 // https://regex101.com/r/y4qWeI/1
+
+void send_message(QString send_msg){
+    QMessageBox msgBox;
+    msgBox.setText(send_msg);
+    msgBox.exec();
+}
+QString get_config_string(QString rain_percent, QString wind_percent, QString duration_time, QString time_of_day){
+    QString conf_string = "Rain % is "+rain_percent+" Wind % is "+wind_percent+" for "+duration_time+" seconds Time of the day is "+time_of_day;
+    return conf_string;
+}
 
 MATBWindow::MATBWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -34,6 +49,10 @@ MATBWindow::MATBWindow(QWidget *parent) :
     ui->events_list->setWidget(window);
     window->setLayout(events_list);
     window->show();
+
+    // Menu Actions
+    connect(ui->menuXPlane_MATB, SIGNAL(triggered(QAction*)), this, SLOT(load_file_clicked(QAction*)));
+
 }
 
 MATBWindow::~MATBWindow()
@@ -49,7 +68,30 @@ void MATBWindow::on_close_button_clicked()
 void MATBWindow::dynamic_buttons_clicked(){
     QPushButton* buttonSender = qobject_cast<QPushButton*>(sender()); // retrieve the button you have clicked
     QString buttonText = buttonSender->text();
-    std::cout << buttonText.toUtf8().constData() << std::endl;
+    int new_rain_percent;
+    int new_wind_percent;
+    int new_duration;
+//    std::cout << buttonText.toUtf8().constData() << std::endl;
+    std::string button_text = buttonText.toUtf8().constData();
+    std::regex rgx("Rain % is (\\d*) Wind % is (\\d*) for (\\d*) seconds Time of the day is (Day|Night)");
+    std::smatch matches;
+    std::regex_search(button_text, matches, rgx);
+    bool ok {false};
+    while(!ok){
+    new_rain_percent = QInputDialog::getInt(this, "Enter new rain % input", "New Rain %: ", std::stoi(matches[1]), 0, 100, 1, &ok);
+    if (!ok){send_message("Incorrect value inputted. Please try again.");}
+    }
+    ok = false;
+    while(!ok){
+    new_wind_percent = QInputDialog::getInt(this, "Enter new rain % input", "New Rain %: ", std::stoi(matches[2]), 0, 100, 1, &ok);
+    if (!ok){send_message("Incorrect value inputted. Please try again.");}
+    }
+    ok = false;
+    while(!ok){
+    new_duration = QInputDialog::getInt(this, "Enter new rain % input", "New Rain %: ", std::stoi(matches[3]), 0, 100, 1, &ok);
+    if (!ok){send_message("Incorrect value inputted. Please try again.");}
+    }
+    buttonSender->setText(get_config_string(QString::number(new_rain_percent), QString::number(new_wind_percent), QString::number(new_duration), "Day"));
 
 }
 
@@ -61,7 +103,7 @@ void MATBWindow::on_Add_to_list_clicked()
     QString time_of_day = ui->day_or_night->currentText();
     QRegExp re("\\d*");
     if (re.exactMatch(rain_percent) && re.exactMatch(wind_percent) && re.exactMatch(duration_time)){
-        QString final_string = "Rain % is "+rain_percent+" Wind % is "+wind_percent+" for "+duration_time+" seconds Time of the day is "+time_of_day;
+        QString final_string = get_config_string(rain_percent, wind_percent, duration_time, time_of_day);
         QPushButton *button6 = new QPushButton(final_string);
         connect(button6, SIGNAL(clicked()), this, SLOT(dynamic_buttons_clicked()));
         test->addWidget(button6);
@@ -70,9 +112,7 @@ void MATBWindow::on_Add_to_list_clicked()
         ui->duration_time->clear();
 
     } else{
-        QMessageBox msgBox;
-        msgBox.setText("You have not entered all numbers. Please make sure you enter only numbers.");
-        msgBox.exec();
+        send_message("You have not entered all numbers. Please make sure you enter only numbers.");
     }
 
 
@@ -88,5 +128,30 @@ void MATBWindow::on_Gen_script_clicked()
     for (const auto *but: butts) {
         out << but->text();
         out << "\n";
+    }
+}
+
+void MATBWindow::add_buttons_to_list(QString rain_percent, QString wind_percent, QString duration_time, QString time_of_day){
+    QString final_string = get_config_string(rain_percent, wind_percent, duration_time, time_of_day);
+    QPushButton *button6 = new QPushButton(final_string);
+    connect(button6, SIGNAL(clicked()), this, SLOT(dynamic_buttons_clicked()));
+    test->addWidget(button6);
+}
+
+void MATBWindow::load_file_clicked(QAction* test){
+    QString fileName = QFileDialog::getOpenFileName(this, ("Open File"),
+                                                      "/home",
+                                                      ("Conf Files (*.conf)"));
+    std::cout << fileName.toUtf8().constData() << std::endl;
+    std::regex rgx("Rain % is (\\d*) Wind % is (\\d*) for (\\d*) seconds Time of the day is (Day|Night)");
+    std::smatch matches;
+    std::string str;
+    std::ifstream input_file(fileName.toUtf8().constData());
+    if (!input_file.good()){
+        std::cout << "Unable to read file" << std::endl;
+    }
+    while (std::getline(input_file, str)) {
+        std::regex_search(str, matches, rgx);
+        add_buttons_to_list(QString::fromStdString(matches[1]), QString::fromStdString(matches[2]), QString::fromStdString(matches[3]), QString::fromStdString(matches[4]));
     }
 }
