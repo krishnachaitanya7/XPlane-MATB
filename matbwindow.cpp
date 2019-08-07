@@ -11,6 +11,7 @@
 #include <QInputDialog>
 #include <regex>
 #include <QMenu>
+#include <QString>
 #include <QFileDialog>
 #include <fstream>
 
@@ -151,7 +152,12 @@ void MATBWindow::load_file_clicked(QAction* test){
         std::cout << "Unable to read file" << std::endl;
     }
     while (std::getline(input_file, str)) {
-        std::regex_search(str, matches, rgx);
-        add_buttons_to_list(QString::fromStdString(matches[1]), QString::fromStdString(matches[2]), QString::fromStdString(matches[3]), QString::fromStdString(matches[4]));
+        if(std::regex_search(str, matches, rgx)){
+            add_buttons_to_list(QString::fromStdString(matches[1]), QString::fromStdString(matches[2]), QString::fromStdString(matches[3]), QString::fromStdString(matches[4]));
+        } else{
+            QString custom_msg = QString::fromStdString("This line aint recognized by regex: "+str);
+            send_message(custom_msg);
+
+        }
     }
 }
