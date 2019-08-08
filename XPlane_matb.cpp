@@ -140,7 +140,6 @@ void sleep_for_me(int duration){
     std::cout << "Sleeping for " << duration << " seconds" << std::endl;
     float end_time = XPLMGetElapsedTime() + (float)duration;
     while (end_time > XPLMGetElapsedTime());
-
 }
 
 bool change_weather(int rain, int wind, int duration_time, std::string day_or_night){
