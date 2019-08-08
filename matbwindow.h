@@ -16,17 +16,32 @@ public:
     ~MATBWindow();
 
 private slots:
+
+    void set_all_defaults();
+
+
+    void on_set_all_default_clicked();
+
     void on_close_button_clicked();
 
-    void on_Add_to_list_clicked();
+    void on_sel_ld_clicked();
 
-    void on_Gen_script_clicked();
+    void on_sel_md_clicked();
+
+    void on_sel_hd_clicked();
+
+    void on_insert_tlx_clicked();
+
+    void on_del_condition_clicked();
 
     void dynamic_buttons_clicked();
 
+    void on_Gen_script_clicked();
+
     void load_file_clicked(QAction* test);
 
-    void add_buttons_to_list(QString rain_percent, QString wind_percent, QString duration_time, QString time_of_day);
+    void add_buttons_to_list(QString button_text);
+
 private:
     Ui::MATBWindow *ui;
 

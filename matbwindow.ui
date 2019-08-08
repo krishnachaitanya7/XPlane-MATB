@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>532</width>
-    <height>547</height>
+    <width>737</width>
+    <height>931</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>0</y>
+      <x>250</x>
+      <y>10</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -34,8 +34,8 @@ border-radius: 1px;</string>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>0</y>
+      <x>450</x>
+      <y>10</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -51,8 +51,8 @@ border-radius: 1px;</string>
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>0</y>
+      <x>350</x>
+      <y>10</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -65,11 +65,11 @@ border-radius: 1px;</string>
      <string>Wind %</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="rain_percent">
+   <widget class="QTextEdit" name="rain_percent_ld">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>50</y>
+      <x>250</x>
+      <y>60</y>
       <width>101</width>
       <height>70</height>
      </rect>
@@ -82,8 +82,8 @@ border-radius: 1px;</string>
    <widget class="QTextEdit" name="textEdit_2">
     <property name="geometry">
      <rect>
-      <x>210</x>
-      <y>50</y>
+      <x>450</x>
+      <y>60</y>
       <width>101</width>
       <height>70</height>
      </rect>
@@ -93,11 +93,11 @@ border-radius: 1px;</string>
 border-radius: 1px;</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="wind_percent">
+   <widget class="QTextEdit" name="wind_percent_ld">
     <property name="geometry">
      <rect>
-      <x>110</x>
-      <y>50</y>
+      <x>350</x>
+      <y>60</y>
       <width>101</width>
       <height>70</height>
      </rect>
@@ -107,11 +107,11 @@ border-radius: 1px;</string>
 border-radius: 1px;</string>
     </property>
    </widget>
-   <widget class="QComboBox" name="day_or_night">
+   <widget class="QComboBox" name="day_or_night_ld">
     <property name="geometry">
      <rect>
-      <x>220</x>
-      <y>70</y>
+      <x>460</x>
+      <y>80</y>
       <width>86</width>
       <height>25</height>
      </rect>
@@ -127,37 +127,24 @@ border-radius: 1px;</string>
      </property>
     </item>
    </widget>
-   <widget class="QPushButton" name="Add_to_list">
+   <widget class="QPushButton" name="sel_ld">
     <property name="geometry">
      <rect>
-      <x>420</x>
+      <x>370</x>
+      <y>430</y>
+      <width>191</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Select Low Difficulty</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="duration_time_ld">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
       <y>60</y>
-      <width>91</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Add to List</string>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="Gen_script">
-    <property name="geometry">
-     <rect>
-      <x>350</x>
-      <y>254</y>
-      <width>131</width>
-      <height>71</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Generate Script</string>
-    </property>
-   </widget>
-   <widget class="QTextEdit" name="duration_time">
-    <property name="geometry">
-     <rect>
-      <x>310</x>
-      <y>50</y>
       <width>101</width>
       <height>70</height>
      </rect>
@@ -170,8 +157,8 @@ border-radius: 1px;</string>
    <widget class="QLabel" name="label_4">
     <property name="geometry">
      <rect>
-      <x>310</x>
-      <y>0</y>
+      <x>150</x>
+      <y>10</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -181,14 +168,14 @@ border-radius: 1px;</string>
 border-radius: 1px;</string>
     </property>
     <property name="text">
-     <string>Duration?</string>
+     <string>Duration (s)</string>
     </property>
    </widget>
    <widget class="QPushButton" name="close_button">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>470</y>
+      <x>640</x>
+      <y>860</y>
       <width>89</width>
       <height>25</height>
      </rect>
@@ -201,10 +188,14 @@ border-radius: 1px;</string>
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>150</y>
-      <width>311</width>
-      <height>351</height>
+      <y>380</y>
+      <width>341</width>
+      <height>401</height>
      </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
     </property>
     <property name="widgetResizable">
      <bool>true</bool>
@@ -214,11 +205,483 @@ border-radius: 1px;</string>
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>309</width>
-       <height>349</height>
+       <width>339</width>
+       <height>399</height>
       </rect>
      </property>
     </widget>
+   </widget>
+   <widget class="QPushButton" name="Gen_script">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>430</y>
+      <width>161</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Generate Script</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="sel_hd">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>530</y>
+      <width>191</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Select High Difficulty</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="sel_md">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>480</y>
+      <width>191</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Select Moderate Difficulty</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="set_all_default">
+    <property name="geometry">
+     <rect>
+      <x>570</x>
+      <y>480</y>
+      <width>161</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Set All Default Values</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="insert_tlx">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>580</y>
+      <width>191</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Insert TLX</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="del_condition">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>630</y>
+      <width>191</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Delete Condition</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>141</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="text">
+     <string>Condition</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>60</y>
+      <width>141</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="text">
+     <string>Low Difficulty</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_7">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>130</y>
+      <width>141</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="text">
+     <string>Moderate Difficulty</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="duration_time_md">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>130</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="wind_percent_md">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>130</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="rain_percent_md">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>130</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit_3">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>130</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_8">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>200</y>
+      <width>141</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="text">
+     <string>High Difficulty</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="duration_time_hd">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>200</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="wind_percent_hd">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>200</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="rain_percent_hd">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>200</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit_4">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>200</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_9">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>270</y>
+      <width>141</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="text">
+     <string>Rest (s)</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="duration_time_rest">
+    <property name="geometry">
+     <rect>
+      <x>150</x>
+      <y>270</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="wind_percent_4">
+    <property name="geometry">
+     <rect>
+      <x>350</x>
+      <y>270</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="html">
+     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;NA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="rain_percent_4">
+    <property name="geometry">
+     <rect>
+      <x>250</x>
+      <y>270</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="html">
+     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;NA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit_5">
+    <property name="geometry">
+     <rect>
+      <x>450</x>
+      <y>270</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="html">
+     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;NA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="day_or_night_md">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>150</y>
+      <width>86</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Day</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Night</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QComboBox" name="day_or_night_hd">
+    <property name="geometry">
+     <rect>
+      <x>460</x>
+      <y>220</y>
+      <width>86</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>Day</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>Night</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="label_10">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>10</y>
+      <width>101</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="text">
+     <string>Terrain (TBD)</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit_6">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>130</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit_7">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>270</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+    <property name="html">
+     <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
+p, li { white-space: pre-wrap; }
+&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Ubuntu'; font-size:11pt; font-weight:400; font-style:normal;&quot;&gt;
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;NA&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit_8">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>200</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="textEdit_9">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>60</y>
+      <width>101</width>
+      <height>70</height>
+     </rect>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">border: 1px solid rgb(60, 60, 60);
+border-radius: 1px;</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -226,7 +689,7 @@ border-radius: 1px;</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>532</width>
+     <width>737</width>
      <height>22</height>
     </rect>
    </property>
