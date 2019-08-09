@@ -15,7 +15,10 @@
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <vector>
+#include <fstream>
 #define PORT 50000
+#define DTTMFMT "%Y-%m-%d %H:%M:%S "
+#define DTTMSZ 21
 #if IBM
 #include <windows.h>
 #endif
@@ -44,9 +47,12 @@ std::string high_difficulty {"High Difficulty"};
 std::string insert_tlx {"Do TLX Activity"};
 int rain_ld, wind_ld, duration_ld, rain_md, wind_md, duration_md, rain_hd, wind_hd, duration_hd;
 std::string day_night_ld, day_night_md, day_night_hd;
-
+static std::fstream log_file;
+static std::string plugin_log_file = "ShineLabPlugin_log.txt";
 void add_actions();
 bool change_weather(int rain_percent, int wind_percent, int duration_time, std::string day_or_night);
+static char *getDtTm (char *buff);
+void write_to_log(std::string write_text);
 void sleep_for_me(int duration);
 static int MyKeySniffer(
         char                 inChar,
@@ -63,6 +69,17 @@ PLUGIN_API int XPluginStart(
     strcpy(outSig, "This is a MATB Hello World Plugin");
     strcpy(outDesc, "MATB program");
 
+    log_file.open(plugin_log_file, std::fstream::in | std::fstream::out | std::fstream::app);
+    if (!log_file )
+    {
+        std::cout << "Cannot open file, file does not exist. Creating new file..";
+
+        log_file.open(plugin_log_file,  std::fstream::in | std::fstream::out | std::fstream::trunc);
+        log_file.close();
+
+    }
+    log_file <<"---------------------------Start of new log----------------------------------------";
+    log_file.close();
     XPLMRegisterKeySniffer(
             MyKeySniffer, 				/* Our callback. */
             1, 			/* Receive input before plugin windows. */
@@ -146,10 +163,14 @@ int MyKeySniffer(
             std::string present_action = actions.front();
             actions.erase(actions.begin());
             if (present_action == low_difficulty) {
+                write_to_log(low_difficulty);
                 change_weather(rain_ld, wind_ld, duration_ld, day_night_ld);
+
             } else if (present_action == moderate_difficulty) {
+                write_to_log(moderate_difficulty);
                 change_weather(rain_md, wind_md, duration_md, day_night_md);
             } else if (present_action == high_difficulty) {
+                write_to_log(high_difficulty);
                 change_weather(rain_hd, wind_hd, duration_hd, day_night_hd);
             }
         } else{
@@ -186,7 +207,6 @@ void sleep_for_me(int duration){
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
         printf("\nConnection Failed \n");
-
     }
     send(sock , hello , strlen(hello) , 0 );
     printf("Hello message sent\n");
@@ -202,6 +222,18 @@ bool change_weather(int rain, int wind, int duration_time, std::string day_or_ni
     std::cout << "The height is: " << XPLMGetDataf(XPLMFindDataRef("sim/flightmodel/misc/h_ind")) << std::endl;
     sleep_for_me(duration_time);
     return true;
+}
+static char *getDtTm (char *buff) {
+    time_t t = time (0);
+    strftime (buff, DTTMSZ, DTTMFMT, localtime (&t));
+    return buff;
+}
+
+void write_to_log(std::string write_text){
+    log_file.open(plugin_log_file, std::fstream::in | std::fstream::out | std::fstream::app);
+    char buff[DTTMSZ];
+    log_file << getDtTm (buff) << write_text << std::endl;
+    log_file.close();
 }
 
 
