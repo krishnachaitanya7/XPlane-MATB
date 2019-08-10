@@ -3,7 +3,7 @@ import socket
 import time
 
 
-def keypress_shift_n():
+def keypress_shift_v():
     pyautogui.keyDown('shift')
     pyautogui.press('v')
     pyautogui.keyUp('shift')
@@ -16,9 +16,9 @@ def keypress_shift_b():
 def delay_for_me(duration):
     time.sleep(duration)
     if duration == 1:
-        keypress_shift_b()
+        keypress_shift_v()
     else:
-        keypress_shift_n()
+        keypress_shift_b()
 
 
 

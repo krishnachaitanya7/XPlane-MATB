@@ -44,7 +44,7 @@ std::string high_difficulty {"High Difficulty"};
 std::string insert_tlx {"Do TLX Activity"};
 int rain_ld, wind_ld, duration_ld, rain_md, wind_md, duration_md, rain_hd, wind_hd, duration_hd;
 std::string day_night_ld, day_night_md, day_night_hd;
-const float min_cruise_height {100};
+const float min_cruise_height {500};
 static std::fstream log_file;
 static std::string plugin_log_file = "ShineLabPlugin_log.txt";
 void add_actions();
@@ -76,7 +76,7 @@ PLUGIN_API int XPluginStart(
         log_file.close();
 
     }
-    log_file <<"---------------------------Start of new log----------------------------------------";
+    log_file <<"---------------------------Start of new log----------------------------------------" << std::endl;
     log_file.close();
     XPLMRegisterKeySniffer(
             MyKeySniffer, 				/* Our callback. */
@@ -135,6 +135,8 @@ void add_actions(){
                         actions.push_back(high_difficulty);
 //                        change_weather(rain_hd, wind_hd, duration_hd, day_night_hd);
 
+                    } else if(str == insert_tlx){
+                        actions.push_back(insert_tlx);
                     } else{
                         XPLMSetDatai(XPLMFindDataRef("sim/time/sim_speed"), 0); //Pause Sim
                     }
@@ -163,14 +165,22 @@ int MyKeySniffer(
             actions.erase(actions.begin());
             if (present_action == low_difficulty) {
                 write_to_log(low_difficulty);
+                std::cout << "Changing weather to: " << low_difficulty << std::endl;
                 change_weather(rain_ld, wind_ld, duration_ld, day_night_ld);
 
             } else if (present_action == moderate_difficulty) {
                 write_to_log(moderate_difficulty);
+                std::cout << "Changing weather to: " << moderate_difficulty << std::endl;
                 change_weather(rain_md, wind_md, duration_md, day_night_md);
             } else if (present_action == high_difficulty) {
                 write_to_log(high_difficulty);
+                std::cout << "Changing weather to: " << high_difficulty << std::endl;
                 change_weather(rain_hd, wind_hd, duration_hd, day_night_hd);
+            } else if(present_action == insert_tlx){
+                write_to_log(insert_tlx);
+                std::cout << "Please Do NASA TLX from IPAD " << std::endl;
+                XPLMSetDatai(XPLMFindDataRef("sim/time/sim_speed"), 0);
+
             }
         } else{
             std::cout << "Weather Changing Complete. So starting again" << std::endl;
@@ -182,9 +192,11 @@ int MyKeySniffer(
     else if ((int)gChar == 86 && (gFlags & xplm_ShiftFlag) && (gFlags & xplm_UpFlag)){
         float current_height = XPLMGetDataf(XPLMFindDataRef("sim/flightmodel/misc/h_ind"));
         if (current_height > min_cruise_height){
-            write_to_log("Minimum Cruise level Achieved: "+std::to_string(min_cruise_height));
+            std::cout << "The cruise height reached is: " << current_height << std::endl;
+            write_to_log("Minimum Cruise level Achieved: "+std::to_string(current_height));
             sleep_for_me(2);
         } else{
+            std::cout << "The height is: " << current_height << std::endl;
             sleep_for_me(1);
         }
     }
@@ -217,7 +229,6 @@ void sleep_for_me(int duration){
         printf("\nConnection Failed \n");
     }
     send(sock , hello , strlen(hello) , 0 );
-    printf("Hello message sent\n");
 
 }
 
@@ -227,7 +238,6 @@ bool change_weather(int rain, int wind, int duration_time, std::string day_or_ni
     XPLMSetDataf(XPLMFindDataRef("sim/weather/rain_percent"), rain_percent);
     XPLMSetDataf(XPLMFindDataRef("sim/weather/thunderstorm_percent"), wind_percent);
     XPLMSetDatai(XPLMFindDataRef("sim/weather/cloud_type[0]"), 5);
-    std::cout << "The height is: " << XPLMGetDataf(XPLMFindDataRef("sim/flightmodel/misc/h_ind")) << std::endl;
     sleep_for_me(duration_time);
     return true;
 }
