@@ -231,6 +231,7 @@ bool change_weather(int rain, int wind, int duration_time, std::string day_or_ni
     sleep_for_me(duration_time);
     return true;
 }
+
 static char *getDtTm (char *buff) {
     time_t t = time (0);
     strftime (buff, DTTMSZ, DTTMFMT, localtime (&t));
