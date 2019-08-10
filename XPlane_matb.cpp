@@ -44,6 +44,7 @@ std::string high_difficulty {"High Difficulty"};
 std::string insert_tlx {"Do TLX Activity"};
 int rain_ld, wind_ld, duration_ld, rain_md, wind_md, duration_md, rain_hd, wind_hd, duration_hd;
 std::string day_night_ld, day_night_md, day_night_hd;
+const float min_cruise_height {100};
 static std::fstream log_file;
 static std::string plugin_log_file = "ShineLabPlugin_log.txt";
 void add_actions();
@@ -81,6 +82,7 @@ PLUGIN_API int XPluginStart(
             MyKeySniffer, 				/* Our callback. */
             1, 			/* Receive input before plugin windows. */
             0);					/* Refcon - not used. */
+    sleep_for_me(1);
     return 1;
 }
 
@@ -175,6 +177,15 @@ int MyKeySniffer(
             add_actions();
             sleep_for_me(10);
 
+        }
+    }
+    else if ((int)gChar == 86 && (gFlags & xplm_ShiftFlag) && (gFlags & xplm_UpFlag)){
+        float current_height = XPLMGetDataf(XPLMFindDataRef("sim/flightmodel/misc/h_ind"));
+        if (current_height > min_cruise_height){
+            write_to_log("Minimum Cruise level Achieved: "+std::to_string(min_cruise_height));
+            sleep_for_me(2);
+        } else{
+            sleep_for_me(1);
         }
     }
     return 1; // Should be 1, else other keys won't work
