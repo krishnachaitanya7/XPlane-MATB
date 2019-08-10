@@ -244,7 +244,3 @@ void write_to_log(std::string write_text){
     log_file << getDtTm (buff) << write_text << std::endl;
     log_file.close();
 }
-
-
-
-
