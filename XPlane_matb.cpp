@@ -48,7 +48,8 @@ void add_actions();
 bool change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night);
 static char *getDtTm (char *buff);
 void write_to_log(std::string &write_text);
-void sleep_for_me(int duration);
+void sleep_for_me(int &duration);
+void sleep_for_me(int &&duration);
 static int MyKeySniffer(
         char                 inChar,
         XPLMKeyFlags         inFlags,
@@ -200,8 +201,10 @@ int MyKeySniffer(
     }
     return 1; // Should be 1, else other keys won't work
 }
-
-void sleep_for_me(int duration){
+void sleep_for_me(int &&duration){
+    sleep_for_me(duration);
+}
+void sleep_for_me(int &duration){
     int sock = 0, valread;
     struct sockaddr_in serv_addr;
     std::string s = std::to_string(duration);
