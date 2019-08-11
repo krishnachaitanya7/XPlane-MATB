@@ -16,9 +16,6 @@
 #define PORT 50000
 #define DTTMFMT "%Y-%m-%d %H:%M:%S "
 #define DTTMSZ 21
-#if IBM
-#include <windows.h>
-#endif
 #if LIN
 #include <GL/gl.h>
 #include <sys/socket.h>
