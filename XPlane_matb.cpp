@@ -48,6 +48,7 @@ void add_actions();
 bool change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night);
 static char *getDtTm (char *buff);
 void write_to_log(std::string &write_text);
+void write_to_log(std::string &&write_text);
 void sleep_for_me(int &duration);
 void sleep_for_me(int &&duration);
 static int MyKeySniffer(
@@ -191,8 +192,7 @@ int MyKeySniffer(
         float current_height = XPLMGetDataf(XPLMFindDataRef("sim/flightmodel/misc/h_ind"));
         if (current_height > min_cruise_height){
             std::cout << "The cruise height reached is: " << current_height << std::endl;
-            std::string write_this_to_log = "Minimum Cruise level Achieved: "+std::to_string(current_height);
-            write_to_log(write_this_to_log);
+            write_to_log("Minimum Cruise level Achieved: "+std::to_string(current_height));
             sleep_for_me(2);
         } else{
             std::cout << "The height is: " << current_height << std::endl;
@@ -246,6 +246,10 @@ static char *getDtTm (char *buff) {
     time_t t = time (nullptr);
     strftime (buff, DTTMSZ, DTTMFMT, localtime (&t));
     return buff;
+}
+
+void write_to_log(std::string &&write_text){
+    write_to_log(write_text);
 }
 
 void write_to_log(std::string &write_text){
