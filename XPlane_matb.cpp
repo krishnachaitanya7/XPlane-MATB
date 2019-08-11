@@ -1,8 +1,8 @@
 #include "XPlane/XPLM/XPLMDisplay.h"
-#include "XPlane/XPLM/XPLMGraphics.h"
-#include <XPlane/XPLM/XPLMUtilities.h>
+//#include "XPlane/XPLM/XPLMGraphics.h"
+//#include <XPlane/XPLM/XPLMUtilities.h>
 #include <XPlane/XPLM/XPLMDataAccess.h>
-#include <XPlane/XPLM/XPLMProcessing.h>
+//#include <XPlane/XPLM/XPLMProcessing.h>
 #include <string.h>
 #include <iostream>
 #include <fstream>
