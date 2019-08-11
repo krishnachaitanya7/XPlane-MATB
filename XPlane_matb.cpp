@@ -47,7 +47,7 @@ static std::string plugin_log_file = "ShineLabPlugin_log.txt";
 void add_actions();
 bool change_weather(int rain_percent, int wind_percent, int duration_time, std::string day_or_night);
 static char *getDtTm (char *buff);
-void write_to_log(std::string write_text);
+void write_to_log(std::string &write_text);
 void sleep_for_me(int duration);
 static int MyKeySniffer(
         char                 inChar,
@@ -190,7 +190,8 @@ int MyKeySniffer(
         float current_height = XPLMGetDataf(XPLMFindDataRef("sim/flightmodel/misc/h_ind"));
         if (current_height > min_cruise_height){
             std::cout << "The cruise height reached is: " << current_height << std::endl;
-            write_to_log("Minimum Cruise level Achieved: "+std::to_string(current_height));
+            std::string write_this_to_log = "Minimum Cruise level Achieved: "+std::to_string(current_height);
+            write_to_log(write_this_to_log);
             sleep_for_me(2);
         } else{
             std::cout << "The height is: " << current_height << std::endl;
@@ -245,7 +246,7 @@ static char *getDtTm (char *buff) {
     return buff;
 }
 
-void write_to_log(std::string write_text){
+void write_to_log(std::string &write_text){
     log_file.open(plugin_log_file, std::fstream::in | std::fstream::out | std::fstream::app);
     char buff[DTTMSZ];
     log_file << getDtTm (buff) << write_text << std::endl;
