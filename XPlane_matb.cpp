@@ -95,12 +95,12 @@ void add_actions(){
         std::cout << "Unable to read file" << std::endl;
     }
     std::string str;
-    std::regex rgx("((l|m|h)d) Rain % is (\\d*) Wind % is (\\d*) for (\\d*) seconds Time of the day is (Day|Night)");
+    std::regex rgx(R"((l|m|h)d) Rain % is (\d*) Wind % is (\d*) for (\d*) seconds Time of the day is (Day|Night)");
     std::smatch matches;
 
 
     while (std::getline(in, str)) {
-        if (str.size() > 0) {
+        if (!str.empty()) {
             if(std::regex_search(str, matches, rgx)){
                 if(matches[1] == "ld"){
                     rain_ld = std::stoi(matches[3]);
@@ -187,7 +187,7 @@ int MyKeySniffer(
 
         }
     }
-    else if ((int)gChar == 86 && (gFlags & xplm_ShiftFlag) && (gFlags & xplm_UpFlag)){
+    else if ((int)gChar == 86 and (gFlags & xplm_ShiftFlag) and (gFlags & xplm_UpFlag)){
         float current_height = XPLMGetDataf(XPLMFindDataRef("sim/flightmodel/misc/h_ind"));
         if (current_height > min_cruise_height){
             std::cout << "The cruise height reached is: " << current_height << std::endl;
@@ -205,11 +205,10 @@ void sleep_for_me(int &&duration){
     sleep_for_me(duration);
 }
 void sleep_for_me(int &duration){
-    int sock = 0, valread;
+    int sock = 0;
     struct sockaddr_in serv_addr;
     std::string s = std::to_string(duration);
     const char *hello = s.c_str();
-    char buffer[1024] = {0};
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0)
     {
         printf("\n Socket creation error \n");
@@ -244,7 +243,7 @@ bool change_weather(int &rain, int &wind, int &duration_time, std::string &day_o
 }
 
 static char *getDtTm (char *buff) {
-    time_t t = time (0);
+    time_t t = time (nullptr);
     strftime (buff, DTTMSZ, DTTMFMT, localtime (&t));
     return buff;
 }
