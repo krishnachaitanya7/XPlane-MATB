@@ -45,7 +45,7 @@ const float min_cruise_height {500};
 static std::fstream log_file;
 static std::string plugin_log_file = "ShineLabPlugin_log.txt";
 void add_actions();
-bool change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night);
+void change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night);
 static char *getDtTm (char *buff);
 void write_to_log(std::string &write_text);
 void write_to_log(std::string &&write_text);
@@ -232,14 +232,13 @@ void sleep_for_me(int &duration){
 
 }
 
-bool change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night){
+void change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night){
     float rain_percent = (float)rain / (float)100;
     float wind_percent = (float)wind / (float)100;
     XPLMSetDataf(XPLMFindDataRef("sim/weather/rain_percent"), rain_percent);
     XPLMSetDataf(XPLMFindDataRef("sim/weather/thunderstorm_percent"), wind_percent);
     XPLMSetDatai(XPLMFindDataRef("sim/weather/cloud_type[0]"), 5);
     sleep_for_me(duration_time);
-    return true;
 }
 
 static char *getDtTm (char *buff) {
