@@ -8,10 +8,12 @@ def keypress_shift_v():
     pyautogui.press('v')
     pyautogui.keyUp('shift')
 
+
 def keypress_shift_b():
     pyautogui.keyDown('shift')
     pyautogui.press('b')
     pyautogui.keyUp('shift')
+
 
 def delay_for_me(duration):
     time.sleep(duration)
@@ -19,7 +21,6 @@ def delay_for_me(duration):
         keypress_shift_v()
     else:
         keypress_shift_b()
-
 
 
 if __name__ == "__main__":
@@ -36,4 +37,3 @@ if __name__ == "__main__":
             delay_for_me(delay_time)
             conn.send("ack")
     conn.close()
-
