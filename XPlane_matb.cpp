@@ -32,8 +32,8 @@
 #endif
 
 static XPLMKeyFlags	gFlags = 0;
-static char			gVirtualKey = 0;
-static char			gChar = 0;
+static char	gVirtualKey = 0;
+static char	gChar = 0;
 static std::vector<std::string> actions;
 std::string low_difficulty {"Low Difficulty"};
 std::string moderate_difficulty {"Moderate Difficulty"};
