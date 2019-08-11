@@ -43,7 +43,7 @@ int rain_ld, wind_ld, duration_ld, rain_md, wind_md, duration_md, rain_hd, wind_
 std::string day_night_ld, day_night_md, day_night_hd;
 const float min_cruise_height {500};
 static std::fstream log_file;
-static std::string plugin_log_file = "ShineLabPlugin_log.txt";
+const std::string plugin_log_file = "ShineLabPlugin_log.txt";
 void add_actions();
 void change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night);
 static char *getDtTm (char *buff);
