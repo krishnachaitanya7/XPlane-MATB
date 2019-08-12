@@ -2,4 +2,3 @@
 .git/
 cmake-build-debug/
 venv/
-XPlane_MATB.pro.*
