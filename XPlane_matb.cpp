@@ -75,7 +75,7 @@ PLUGIN_API int XPluginStart(
         log_file.close();
 
     }
-    log_file <<"---------------------------Start of new log----------------------------------------" << std::endl;
+    log_file << "---------------------------Start of new log----------------------------------------" << std::endl;
     log_file.close();
     XPLMRegisterKeySniffer(
             MyKeySniffer, 				/* Our callback. */
