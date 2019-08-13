@@ -96,7 +96,7 @@ void add_actions(){
         std::cout << "Unable to read file" << std::endl;
     }
     std::string str;
-    std::regex rgx(R"((l|m|h)d) Rain % is (\d*) Wind % is (\d*) for (\d*) seconds Time of the day is (Day|Night)");
+    std::regex rgx("((l|m|h)d) Rain % is (\\d*) Wind % is (\\d*) for (\\d*) seconds Time of the day is (Day|Night)");
     std::smatch matches;
 
 
@@ -178,7 +178,7 @@ int MyKeySniffer(
             } else if(present_action == insert_tlx){
                 write_to_log(insert_tlx);
                 std::cout << "Please Do NASA TLX from IPAD " << std::endl;
-                XPLMSetDatai(XPLMFindDataRef("sim/time/sim_speed"), 0);
+                XPLMSetDatai(XPLMFindDataRef("sim/operation/pause_toggle"), 0);
 
             }
         } else{

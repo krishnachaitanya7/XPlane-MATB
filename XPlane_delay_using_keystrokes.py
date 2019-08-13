@@ -35,5 +35,5 @@ if __name__ == "__main__":
         else:
             delay_time = int(data)
             delay_for_me(delay_time)
-            conn.send("ack")
+            # conn.send("ack")
     conn.close()
