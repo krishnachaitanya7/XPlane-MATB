@@ -2,6 +2,7 @@
 //#include "XPlane/XPLM/XPLMGraphics.h"
 //#include <XPlane/XPLM/XPLMUtilities.h>
 #include <XPlane/XPLM/XPLMDataAccess.h>
+#include <XPlane/XPLM/XPLMUtilities.h>
 //#include <XPlane/XPLM/XPLMProcessing.h>
 #include <string.h>
 #include <iostream>
@@ -178,7 +179,7 @@ int MyKeySniffer(
             } else if(present_action == insert_tlx){
                 write_to_log(insert_tlx);
                 std::cout << "Please Do NASA TLX from IPAD " << std::endl;
-                XPLMSetDatai(XPLMFindDataRef("sim/operation/pause_toggle"), 0);
+                XPLMCommandOnce(XPLMFindCommand("sim/operation/pause_toggle"));
 
             }
         } else{
