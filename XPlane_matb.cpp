@@ -180,7 +180,6 @@ int MyKeySniffer(
                 write_to_log(insert_tlx);
                 std::cout << "Please Do NASA TLX from IPAD " << std::endl;
                 XPLMCommandOnce(XPLMFindCommand("sim/operation/pause_toggle"));
-
             }
         } else{
             std::cout << "Weather Changing Complete. So starting again" << std::endl;
