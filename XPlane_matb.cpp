@@ -77,7 +77,8 @@ PLUGIN_API int XPluginStart(
     strcpy(outSig, "This is a MATB Hello World Plugin");
     strcpy(outDesc, "MATB program");
 
-    current_config_file = get_config_file();
+
+    current_config_file = "XPlane.conf";
     std::cout << "Config file is: " << current_config_file << std::endl;
     log_file.open(plugin_log_file, std::fstream::in | std::fstream::out | std::fstream::app);
     if (!log_file )
