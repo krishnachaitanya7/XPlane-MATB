@@ -12,7 +12,7 @@ class rest_dialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit rest_dialog(QWidget *parent = nullptr, int elapsed_time = 1);
+    explicit rest_dialog(QWidget *parent = nullptr, int elapsed_time = 15);
     ~rest_dialog();
 public slots:
     void MyTimerSlot();

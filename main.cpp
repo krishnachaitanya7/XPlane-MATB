@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
     MATBWindow w;
     w.show();
 
-    rest_dialog r(nullptr, 20);
+    rest_dialog r(nullptr, 15);
     r.show();
 
     return a.exec();

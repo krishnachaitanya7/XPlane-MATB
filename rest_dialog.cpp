@@ -14,6 +14,8 @@ rest_dialog::rest_dialog(QWidget *parent, int elapsed_time) :
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()),this, SLOT(MyTimerSlot()));
     timer->start(1000);
+    ui->progressBar->setMaximum(elapsed_time);
+    ui->progressBar->setMinimum(0);
     ui->progressBar->setValue(elapsed_seconds);
     ui->countdown_timer->setText(QString::number(elapsed_seconds));
 }

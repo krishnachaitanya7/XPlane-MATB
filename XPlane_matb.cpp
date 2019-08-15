@@ -42,6 +42,7 @@ std::string low_difficulty {"Low Difficulty"};
 std::string moderate_difficulty {"Moderate Difficulty"};
 std::string high_difficulty {"High Difficulty"};
 std::string insert_tlx {"Do TLX Activity"};
+bool rest_next {false};
 int rain_ld, wind_ld, duration_ld, rain_md, wind_md, duration_md, rain_hd, wind_hd, duration_hd;
 std::string day_night_ld, day_night_md, day_night_hd;
 const float min_cruise_height {500};
@@ -170,32 +171,38 @@ int MyKeySniffer(
     gFlags = inFlags;
     gChar = inChar;
     if ((int)gChar == 66 && (gFlags & xplm_ShiftFlag) && (gFlags & xplm_UpFlag)){
-        if (!actions.empty()) {
-            std::string present_action = actions.front();
-            actions.erase(actions.begin());
-            if (present_action == low_difficulty) {
-                write_to_log(low_difficulty);
-                std::cout << "Changing weather to: " << low_difficulty << std::endl;
-                change_weather(rain_ld, wind_ld, duration_ld, day_night_ld);
-                show_rest_screen(rest_time);
-            } else if (present_action == moderate_difficulty) {
-                write_to_log(moderate_difficulty);
-                std::cout << "Changing weather to: " << moderate_difficulty << std::endl;
-                change_weather(rain_md, wind_md, duration_md, day_night_md);
-                show_rest_screen(rest_time);
-            } else if (present_action == high_difficulty) {
-                write_to_log(high_difficulty);
-                std::cout << "Changing weather to: " << high_difficulty << std::endl;
-                change_weather(rain_hd, wind_hd, duration_hd, day_night_hd);
-                show_rest_screen(rest_time);
-            } else if(present_action == insert_tlx){
-                write_to_log(insert_tlx);
-                std::cout << "Please Complete the Survey" << std::endl;
-                XPLMCommandOnce(XPLMFindCommand("sim/operation/pause_toggle"));            }
-        } else{
-            std::cout << "Weather Changing Complete. So starting again" << std::endl;
-            add_actions();
-            sleep_for_me(10);
+        if(rest_next){
+            show_rest_screen(rest_time);
+            rest_next = false;
+        } else {
+            if (!actions.empty()) {
+                std::string present_action = actions.front();
+                actions.erase(actions.begin());
+                if (present_action == low_difficulty) {
+                    write_to_log(low_difficulty);
+                    std::cout << "Changing weather to: " << low_difficulty << std::endl;
+                    change_weather(rain_ld, wind_ld, duration_ld, day_night_ld);
+                    rest_next = true;
+                } else if (present_action == moderate_difficulty) {
+                    write_to_log(moderate_difficulty);
+                    std::cout << "Changing weather to: " << moderate_difficulty << std::endl;
+                    change_weather(rain_md, wind_md, duration_md, day_night_md);
+                    rest_next = true;
+                } else if (present_action == high_difficulty) {
+                    write_to_log(high_difficulty);
+                    std::cout << "Changing weather to: " << high_difficulty << std::endl;
+                    change_weather(rain_hd, wind_hd, duration_hd, day_night_hd);
+                    rest_next = true;
+                } else if (present_action == insert_tlx) {
+                    write_to_log(insert_tlx);
+                    std::cout << "Please Complete the Survey" << std::endl;
+                    XPLMCommandOnce(XPLMFindCommand("sim/operation/pause_toggle"));
+                }
+            } else {
+                std::cout << "Weather Changing Complete. So starting again" << std::endl;
+                add_actions();
+                sleep_for_me(10);
+            }
         }
     }
     else if ((int)gChar == 86 and (gFlags & xplm_ShiftFlag) and (gFlags & xplm_UpFlag)){
@@ -219,8 +226,10 @@ int MyKeySniffer(
 
 int start_rest_screen(int &countdown_seconds){
     int argc {1};
-    char argv[] = {"Rest Dialog"};
-    QApplication a(argc, reinterpret_cast<char **>(argv));
+    char test_argv {'Q'};
+    char *y = &test_argv;
+    char **argv = &y;
+    QApplication a(argc, argv);
     rest_dialog r(nullptr, countdown_seconds);
     r.show();
     return r.exec();
