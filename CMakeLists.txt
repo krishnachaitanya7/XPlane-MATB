@@ -6,9 +6,11 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 find_package(Qt5 COMPONENTS Core Gui Widgets REQUIRED)
+FIND_PACKAGE( Boost 1.67 COMPONENTS system filesystem REQUIRED )
 # End
 # Cmake Code for XPlane
 include_directories("/usr/local/include")
+include_directories( ${Boost_INCLUDE_DIR} )
 set(CMAKE_CXX_FLAGS "-shared -rdynamic -nodefaultlibs -undefined_warning -fPIC -Wall -Wextra -std=c++0x -pthread")
 add_definitions(-DAPL=0 -DIBM=0 -DLIN=1 -DXPLM200=1 -DXPLM210=1 -DXPLM300=1 -DXPLM301=1)
 # End
@@ -24,4 +26,6 @@ add_executable(qt_xplane_test
         ${ui_wrap}
         ${moc_sources}
         ${project_headers})
-target_link_libraries(qt_xplane_test Qt5::Core Qt5::Gui Qt5::Widgets)
+target_link_libraries(qt_xplane_test Qt5::Core Qt5::Gui Qt5::Widgets ${Boost_FILESYSTEM_LIBRARY}
+        ${Boost_SYSTEM_LIBRARY}
+        ${Boost_REGEX_LIBRARY})
