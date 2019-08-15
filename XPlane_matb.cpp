@@ -15,8 +15,9 @@
 #include <vector>
 #include <fstream>
 #include "rest_dialog.h"
+#include <experimental/filesystem>
 #define PORT 50000
-#define DTTMFMT "%Y-%m-%d %H:%M:%S "
+#define DTTMFMT "%Y-%m-%d %H:%M:%S"
 #define DTTMSZ 21
 #if LIN
 #include <GL/gl.h>
@@ -33,7 +34,8 @@
 #ifndef XPLM300
 #error This is made to be compiled against the XPLM300 SDK
 #endif
-
+namespace fs = std::experimental::filesystem;
+std::string current_config_file;
 static XPLMKeyFlags	gFlags = 0;
 static char	gVirtualKey = 0;
 static char	gChar = 0;
@@ -48,7 +50,7 @@ std::string day_night_ld, day_night_md, day_night_hd;
 const float min_cruise_height {500};
 int start_sim_immediately {10000};
 static std::fstream log_file;
-const std::string plugin_log_file = "ShineLabPlugin_log.txt";
+std::string plugin_log_file;
 static int rest_time {0};
 void add_actions();
 void change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night);
@@ -59,6 +61,7 @@ void sleep_for_me(int &duration);
 void sleep_for_me(int &&duration);
 int start_rest_screen(int &countdown_seconds);
 void show_rest_screen(int &countdown_seconds);
+std::string get_config_file();
 static int MyKeySniffer(
         char                 inChar,
         XPLMKeyFlags         inFlags,
@@ -74,6 +77,8 @@ PLUGIN_API int XPluginStart(
     strcpy(outSig, "This is a MATB Hello World Plugin");
     strcpy(outDesc, "MATB program");
 
+    current_config_file = get_config_file();
+    std::cout << "Config file is: " << current_config_file << std::endl;
     log_file.open(plugin_log_file, std::fstream::in | std::fstream::out | std::fstream::app);
     if (!log_file )
     {
@@ -97,6 +102,15 @@ PLUGIN_API void	XPluginStop(void){}
 PLUGIN_API void XPluginDisable(void) { }
 PLUGIN_API int  XPluginEnable(void)  { return 1; }
 PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void * inParam) {}
+
+std::string get_config_file(){
+    std::string path(".");
+    std::string ext(".conf");
+    for(auto& p: fs::recursive_directory_iterator(path)){
+        if(p.path().extension() == ext)
+            return p.path();
+    }
+}
 
 void add_actions(){
     std::ifstream in("XPlane.conf");
@@ -297,6 +311,7 @@ void write_to_log(std::string &&write_text){
 void write_to_log(std::string &write_text){
     log_file.open(plugin_log_file, std::fstream::in | std::fstream::out | std::fstream::app);
     char buff[DTTMSZ];
-    log_file << getDtTm (buff) << write_text << std::endl;
+    int64_t now = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+    log_file << getDtTm (buff) << "." << now << write_text << std::endl;
     log_file.close();
 }
