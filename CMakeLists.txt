@@ -14,12 +14,14 @@ add_definitions(-DAPL=0 -DIBM=0 -DLIN=1 -DXPLM200=1 -DXPLM210=1 -DXPLM300=1 -DXP
 # End
 # CMake for Qt
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-set(project_sources XPlane_matb.cpp)
-#set(project_headers mainwindow.h)
-#set(project_ui mainwindow.ui)
-#qt5_wrap_ui(ui_wrap ${project_ui})
-#qt5_wrap_cpp(moc_sources ${project_headers})
+set(project_sources rest_dialog.cpp XPlane_matb.cpp)
+set(project_headers rest_dialog.h)
+set(project_ui rest_dialog.ui)
+qt5_wrap_ui(ui_wrap ${project_ui})
+qt5_wrap_cpp(moc_sources ${project_headers})
 add_executable(qt_xplane_test
         ${project_sources}
-        )
-target_link_libraries(qt_xplane_test)
+        ${ui_wrap}
+        ${moc_sources}
+        ${project_headers})
+target_link_libraries(qt_xplane_test Qt5::Core Qt5::Gui Qt5::Widgets)

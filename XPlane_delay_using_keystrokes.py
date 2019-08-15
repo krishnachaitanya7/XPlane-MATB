@@ -16,9 +16,12 @@ def keypress_shift_b():
 
 
 def delay_for_me(duration):
-    time.sleep(duration)
-    if duration == 1:
-        keypress_shift_v()
+    if duration != 10000:
+        time.sleep(duration)
+        if duration == 1:
+            keypress_shift_v()
+        else:
+            keypress_shift_b()
     else:
         keypress_shift_b()
 

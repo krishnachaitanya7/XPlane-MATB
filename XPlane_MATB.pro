@@ -26,13 +26,17 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        matbwindow.cpp
+        matbwindow.cpp \
+    rest_dialog.cpp
 
 HEADERS += \
-        matbwindow.h
+        matbwindow.h \
+    rest_dialog.h
 
 FORMS += \
-        matbwindow.ui
+        matbwindow.ui \
+    rest_dialog.ui \
+    rest_dialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

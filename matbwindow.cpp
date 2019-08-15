@@ -206,6 +206,8 @@ void MATBWindow::on_Gen_script_clicked(){
     out << "\n";
     out << difficulty_string_generator("hd", ui->rain_percent_hd->toPlainText(), ui->wind_percent_hd->toPlainText(), ui->duration_time_hd->toPlainText(), ui->day_or_night_hd->currentText());
     out << "\n";
+    out << "Rest duration is: " << ui->duration_time_rest->toPlainText();
+    out << "\n";
     QList<QPushButton *> butts = my_button_window->findChildren<QPushButton *>();
     for (const auto *but: butts) {
         out << but->text();
