@@ -273,7 +273,7 @@ border-radius: 1px;</string>
      </rect>
     </property>
     <property name="text">
-     <string>Insert TLX</string>
+     <string>Insert Survey</string>
     </property>
    </widget>
    <widget class="QPushButton" name="del_condition">

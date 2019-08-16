@@ -27,18 +27,18 @@ static int rain_ld {0};
 static int wind_ld {0};
 static QString day_night_ld = "Day";
 static int duration_md {20};
-static int rain_md {33};
-static int wind_md {33};
+static int rain_md {50};
+static int wind_md {50};
 static QString day_night_md = "Day";
 static int duration_hd {20};
 static int rain_hd {99};
 static int wind_hd {99};
 static QString day_night_hd = "Day";
-static int rest_seconds {60};
+static int rest_seconds {15};
 static QString low_difficulty {"Low Difficulty"};
 static QString moderate_difficulty {"Moderate Difficulty"};
 static QString high_difficulty {"High Difficulty"};
-static QString insert_tlx {"Do TLX Activity"};
+static QString insert_tlx {"Fill Out Survey"};
 // End constanats declaration
 
 //Important Links
@@ -58,11 +58,11 @@ void MATBWindow::set_all_defaults(){
         +---------------------+----------+--------+--------+
         | Low Difficulty      | 20       | 0      | 0      |
         +---------------------+----------+--------+--------+
-        | Moderate Difficulty | 20       | 33     | 33     |
+        | Moderate Difficulty | 20       | 50     | 50     |
         +---------------------+----------+--------+--------+
         | High Difficulty     | 20       | 99     | 99     |
         +---------------------+----------+--------+--------+
-        | Rest                | 60       | NA     | NA     |
+        | Rest                | 15       | NA     | NA     |
         +---------------------+----------+--------+--------+
     */
     ui->duration_time_ld->setText(QString::number(duration_ld));

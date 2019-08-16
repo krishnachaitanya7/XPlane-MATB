@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>301</width>
-    <height>222</height>
+    <width>424</width>
+    <height>173</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>110</x>
+     <x>180</x>
      <y>10</y>
      <width>91</width>
      <height>31</height>
@@ -35,8 +35,8 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>90</y>
-     <width>221</width>
+     <y>60</y>
+     <width>231</width>
      <height>31</height>
     </rect>
    </property>
@@ -46,15 +46,15 @@
     </font>
    </property>
    <property name="text">
-    <string>Test Starts Again in:</string>
+    <string>Flight Starts Again in:</string>
    </property>
   </widget>
   <widget class="QLabel" name="countdown_timer">
    <property name="geometry">
     <rect>
-     <x>230</x>
-     <y>90</y>
-     <width>67</width>
+     <x>250</x>
+     <y>60</y>
+     <width>151</width>
      <height>31</height>
     </rect>
    </property>
@@ -70,8 +70,8 @@
   <widget class="QProgressBar" name="progressBar">
    <property name="geometry">
     <rect>
-     <x>80</x>
-     <y>150</y>
+     <x>160</x>
+     <y>110</y>
      <width>118</width>
      <height>23</height>
     </rect>

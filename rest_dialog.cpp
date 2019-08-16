@@ -17,7 +17,7 @@ rest_dialog::rest_dialog(QWidget *parent, int elapsed_time) :
     ui->progressBar->setMaximum(elapsed_time);
     ui->progressBar->setMinimum(0);
     ui->progressBar->setValue(elapsed_seconds);
-    ui->countdown_timer->setText(QString::number(elapsed_seconds));
+    ui->countdown_timer->setText(QString::number(elapsed_seconds)+" Seconds");
 }
 
 rest_dialog::~rest_dialog()
@@ -26,7 +26,7 @@ rest_dialog::~rest_dialog()
 }
 
 void rest_dialog::MyTimerSlot(){
-    ui->countdown_timer->setText(QString::number(elapsed_seconds));
+    ui->countdown_timer->setText(QString::number(elapsed_seconds)+" Seconds");
     ui->progressBar->setValue(elapsed_seconds);
     --elapsed_seconds;
     if (elapsed_seconds == 0){

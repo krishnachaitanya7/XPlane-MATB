@@ -5,16 +5,14 @@
 #include <XPlane/XPLM/XPLMUtilities.h>
 //#include <XPlane/XPLM/XPLMProcessing.h>
 #include <string.h>
+#include <stdlib.h>
 #include <iostream>
 #include <fstream>
-#include <chrono>
 #include <regex>
-#include <unistd.h>
 #include <ctime>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <vector>
-#include <fstream>
 #include "rest_dialog.h"
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 #include <boost/filesystem.hpp>
@@ -44,7 +42,7 @@ static std::vector<std::string> actions;
 std::string low_difficulty {"Low Difficulty"};
 std::string moderate_difficulty {"Moderate Difficulty"};
 std::string high_difficulty {"High Difficulty"};
-std::string insert_tlx {"Do TLX Activity"};
+std::string insert_tlx {"Fill Out Survey"};
 bool rest_next {false};
 int rain_ld, wind_ld, duration_ld, rain_md, wind_md, duration_md, rain_hd, wind_hd, duration_hd;
 std::string day_night_ld, day_night_md, day_night_hd;
@@ -80,6 +78,7 @@ PLUGIN_API int XPluginStart(
     strcpy(outDesc, "MATB program");
     current_config_file = get_config_file();
     char buff[DTTMSZ];
+    plugin_log_file = "";
     plugin_log_file += getDtTm(buff);
     plugin_log_file += "_";
     plugin_log_file += current_config_file;
@@ -194,21 +193,23 @@ int MyKeySniffer(
                     write_to_log(low_difficulty);
                     std::cout << "Changing weather to: " << low_difficulty << std::endl;
                     change_weather(rain_ld, wind_ld, duration_ld, day_night_ld);
-                    rest_next = true;
+                    rest_next = !(actions.front() == insert_tlx);
+
                 } else if (present_action == moderate_difficulty) {
                     write_to_log(moderate_difficulty);
                     std::cout << "Changing weather to: " << moderate_difficulty << std::endl;
                     change_weather(rain_md, wind_md, duration_md, day_night_md);
-                    rest_next = true;
+                    rest_next = !(actions.front() == insert_tlx);
                 } else if (present_action == high_difficulty) {
                     write_to_log(high_difficulty);
                     std::cout << "Changing weather to: " << high_difficulty << std::endl;
                     change_weather(rain_hd, wind_hd, duration_hd, day_night_hd);
-                    rest_next = true;
+                    rest_next = !(actions.front() == insert_tlx);
                 } else if (present_action == insert_tlx) {
                     write_to_log(insert_tlx);
                     std::cout << "Please Complete the Survey" << std::endl;
                     XPLMCommandOnce(XPLMFindCommand("sim/operation/pause_toggle"));
+
                 }
             } else {
                 std::cout << "Weather Changing Complete. So starting again" << std::endl;
@@ -226,7 +227,7 @@ int MyKeySniffer(
             sleep_for_me(2);
         } else{
             std::cout << "The height is: " << current_height << std::endl;
-            sleep_for_me(2);
+            sleep_for_me(1);
         }
     }
     else if ((int)gChar == 80 and (gFlags & xplm_ShiftFlag) and (gFlags & xplm_UpFlag)){
@@ -253,6 +254,7 @@ void show_rest_screen(int &countdown_seconds){
     }
     start_rest_screen(countdown_seconds);
     XPLMCommandOnce(XPLMFindCommand("sim/operation/pause_toggle"));
+    system("wmctrl -a \"X-System\"");
     sleep_for_me(start_sim_immediately);
 }
 
@@ -282,6 +284,7 @@ void sleep_for_me(int &duration){
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0)
     {
         printf("\nConnection Failed \n");
+        sleep_for_me(duration);
     }
     send(sock , hello , strlen(hello) , 0 );
 
