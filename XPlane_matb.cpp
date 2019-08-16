@@ -3,9 +3,10 @@
 //#include <XPlane/XPLM/XPLMUtilities.h>
 #include <XPlane/XPLM/XPLMDataAccess.h>
 #include <XPlane/XPLM/XPLMUtilities.h>
-//#include <XPlane/XPLM/XPLMProcessing.h>
+#include <XPlane/XPLM/XPLMPlanes.h>
+#include <XPlane/XPLM/XPLMProcessing.h>
 #include <string.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <regex>
@@ -52,6 +53,7 @@ static std::fstream log_file;
 std::string plugin_log_file {""};
 std::string current_config_file;
 static int rest_time {0};
+bool aircraftloaded {false};
 void add_actions();
 void change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night);
 static char *getDtTm (char *buff);
@@ -62,6 +64,7 @@ void sleep_for_me(int &&duration);
 int start_rest_screen(int &countdown_seconds);
 void show_rest_screen(int &countdown_seconds);
 std::string get_config_file();
+float DefaultAircraftLoopCB(float elapsedMe, float elapsedSim, int counter, void * refcon);
 static int MyKeySniffer(
         char                 inChar,
         XPLMKeyFlags         inFlags,
@@ -76,6 +79,7 @@ PLUGIN_API int XPluginStart(
     strcpy(outName, "XPlane MATB");
     strcpy(outSig, "This is a MATB Hello World Plugin");
     strcpy(outDesc, "MATB program");
+
     current_config_file = get_config_file();
     char buff[DTTMSZ];
     plugin_log_file = "";
@@ -94,6 +98,7 @@ PLUGIN_API int XPluginStart(
     }
     log_file << "---------------------------Start of new log----------------------------------------" << std::endl;
     log_file.close();
+    XPLMRegisterFlightLoopCallback(DefaultAircraftLoopCB, 1.0, NULL);
     XPLMRegisterKeySniffer(
             MyKeySniffer, 				/* Our callback. */
             1, 			/* Receive input before plugin windows. */
@@ -102,8 +107,8 @@ PLUGIN_API int XPluginStart(
     return 1;
 }
 
-PLUGIN_API void	XPluginStop(void){}
-PLUGIN_API void XPluginDisable(void) { }
+PLUGIN_API void	XPluginStop(void){std::cout << "Plugin Stopped" << std::endl;}
+PLUGIN_API void XPluginDisable(void) { std::cout << "Plugin Disabled" << std::endl;}
 PLUGIN_API int  XPluginEnable(void)  { return 1; }
 PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void * inParam) {}
 
@@ -254,7 +259,6 @@ void show_rest_screen(int &countdown_seconds){
     }
     start_rest_screen(countdown_seconds);
     XPLMCommandOnce(XPLMFindCommand("sim/operation/pause_toggle"));
-    system("wmctrl -a \"X-System\"");
     sleep_for_me(start_sim_immediately);
 }
 
@@ -314,6 +318,14 @@ void write_to_log(std::string &write_text){
     char buff[DTTMSZ];
     log_file << getDtTm (buff) << " " << write_text << std::endl;
     log_file.close();
+}
+
+float DefaultAircraftLoopCB(float elapsedMe, float elapsedSim, int counter, void * refcon){
+    if(!aircraftloaded){
+        XPLMPlaceUserAtAirport("EDPQ");
+        aircraftloaded = true;
+    }
+    return 1.0;
 }
 
 std::string get_config_file(){

@@ -20,6 +20,9 @@
 static QVBoxLayout *test;
 static QWidget *my_button_window;
 static QPushButton *last_clicked_button {nullptr};
+static std::map<std::string, std::string> airports_codes_map;
+static std::string arrival_port_default {"Select Arrival Airport"};
+static std::string departure_port_default {"Select Departure Airport"};
 // End Global Static Variables
 // Start Constant Declaration. Only edit here
 static int duration_ld {20};
@@ -39,6 +42,7 @@ static QString low_difficulty {"Low Difficulty"};
 static QString moderate_difficulty {"Moderate Difficulty"};
 static QString high_difficulty {"High Difficulty"};
 static QString insert_tlx {"Fill Out Survey"};
+static std::string airport_file {"/home/shine/CLionProjects/XPlane-MATB/airports.txt"};
 // End constanats declaration
 
 //Important Links
@@ -47,6 +51,27 @@ static QString insert_tlx {"Fill Out Survey"};
 QString difficulty_string_generator(QString difficulty, QString rain_percent, QString wind_percent, QString duration, QString day_or_night){
     QString return_string = difficulty + " Rain % is "+rain_percent+" Wind % is "+wind_percent+" for "+duration+" seconds Time of the day is "+day_or_night;
     return return_string;
+}
+
+void MATBWindow::add_airports(){
+    std::regex rgx("(.*) - (.*)");
+    std::smatch matches;
+    std::string str;
+    std::ifstream input_file(airport_file);
+    if (!input_file.good()){
+        std::cout << "Unable to read file" << std::endl;
+    }
+    ui->departure_airport->addItem(QString::fromStdString(departure_port_default));
+    ui->arrival_airport->addItem(QString::fromStdString(arrival_port_default));
+    while (std::getline(input_file, str)) {
+        if(std::regex_search(str, matches, rgx)){
+            airports_codes_map.emplace(matches.str(1), matches.str(2));
+            ui->departure_airport->addItem(QString::fromStdString(matches.str(1)));
+            ui->arrival_airport->addItem(QString::fromStdString(matches.str(1)));
+
+        }
+    }
+
 }
 
 void MATBWindow::set_all_defaults(){
@@ -82,6 +107,7 @@ void send_message(QString send_msg){
     msgBox.setText(send_msg);
     msgBox.exec();
 }
+
 QString get_config_string(QString rain_percent, QString wind_percent, QString duration_time, QString time_of_day){
     QString conf_string = "Rain % is "+rain_percent+" Wind % is "+wind_percent+" for "+duration_time+" seconds Time of the day is "+time_of_day;
     return conf_string;
@@ -116,13 +142,13 @@ MATBWindow::MATBWindow(QWidget *parent) :
     window->setLayout(events_list);
     window->show();
     set_all_defaults();
+    add_airports();
     // Menu Actions
     connect(ui->menuXPlane_MATB, SIGNAL(triggered(QAction*)), this, SLOT(load_file_clicked(QAction*)));
 
 }
 
-MATBWindow::~MATBWindow()
-{
+MATBWindow::~MATBWindow(){
     delete ui;
 }
 

@@ -1,6 +1,7 @@
 import pyautogui
 import socket
 import time
+import subprocess
 
 
 def keypress_shift_v():
@@ -10,6 +11,8 @@ def keypress_shift_v():
 
 
 def keypress_shift_b():
+    subprocess.call(['wmctrl', '-a', 'X-System'])
+    time.sleep(1)
     pyautogui.keyDown('shift')
     pyautogui.press('b')
     pyautogui.keyUp('shift')
@@ -17,10 +20,11 @@ def keypress_shift_b():
 
 def delay_for_me(duration):
     if duration != 10000:
-        time.sleep(duration)
         if duration == 1:
+            time.sleep(1)
             keypress_shift_v()
         else:
+            time.sleep(duration-1)
             keypress_shift_b()
     else:
         keypress_shift_b()
