@@ -1,6 +1,7 @@
 project(shine-lab-plugin)
 set(CMAKE_CXX_STANDARD 14)
 cmake_minimum_required(VERSION 3.14)
+add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 ## Setting Up Qt
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
