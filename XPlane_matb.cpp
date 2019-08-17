@@ -17,7 +17,6 @@
 #include "rest_dialog.h"
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 #include <boost/filesystem.hpp>
-
 #define PORT 50000
 #define DTTMFMT "%Y-%m-%d %H:%M:%S"
 #define DTTMSZ 21
@@ -39,6 +38,7 @@
 static XPLMKeyFlags	gFlags = 0;
 static char	gVirtualKey = 0;
 static char	gChar = 0;
+std::string homedir;
 static std::vector<std::string> actions;
 std::string low_difficulty {"Low Difficulty"};
 std::string moderate_difficulty {"Moderate Difficulty"};
@@ -84,14 +84,13 @@ PLUGIN_API int XPluginStart(
     char buff[DTTMSZ];
     plugin_log_file = "";
     plugin_log_file += getDtTm(buff);
-    plugin_log_file += "_";
-    plugin_log_file += current_config_file;
-    plugin_log_file += ".log";
+    plugin_log_file += "_" + current_config_file + ".log";
     log_file.open(plugin_log_file, std::fstream::in | std::fstream::out | std::fstream::app);
+    homedir = getenv("HOME");
+    homedir += "/";
     if (!log_file )
     {
         std::cout << "Cannot open file, file does not exist. Creating new file..";
-
         log_file.open(plugin_log_file,  std::fstream::in | std::fstream::out | std::fstream::trunc);
         log_file.close();
 
@@ -107,10 +106,12 @@ PLUGIN_API int XPluginStart(
     return 1;
 }
 
-PLUGIN_API void	XPluginStop(void){std::cout << "Plugin Stopped" << std::endl;}
-PLUGIN_API void XPluginDisable(void) { std::cout << "Plugin Disabled" << std::endl;}
+PLUGIN_API void	XPluginStop(void){
+    actions.clear();
+}
+PLUGIN_API void XPluginDisable(void) {}
 PLUGIN_API int  XPluginEnable(void)  { return 1; }
-PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void * inParam) {}
+PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void * inParam){}
 
 
 

@@ -12,7 +12,9 @@ FIND_PACKAGE( Boost 1.67 COMPONENTS system filesystem REQUIRED )
 include_directories("/usr/local/include")
 include_directories( ${Boost_INCLUDE_DIR} )
 set(CMAKE_CXX_FLAGS "-shared -rdynamic -nodefaultlibs -undefined_warning -fPIC -Wall -Wextra -std=c++0x -pthread")
-add_definitions(-DAPL=0 -DIBM=0 -DLIN=1 -DXPLM200=1 -DXPLM210=1 -DXPLM300=1 -DXPLM301=1)
+add_definitions(-DAPL=0 -DIBM=0 -DLIN=1 -DXPLM200=1 -DXPLM210=1 -DXPLM300=1 -DXPLM301=1 -D_GLIBCXX_USE_CXX11_ABI=0)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -gdwarf-3")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -gdwarf-3")
 # End
 # CMake for Qt
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
