@@ -57,6 +57,7 @@ static int rest_time {0};
 bool aircraftloaded {false};
 std::string departing_airport;
 void add_actions();
+void set_airport();
 void change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night);
 static char *getDtTm (char *buff);
 void write_to_log(std::string &write_text);
@@ -99,6 +100,7 @@ PLUGIN_API int XPluginStart(
     }
     log_file << "---------------------------Start of new log----------------------------------------" << std::endl;
     log_file.close();
+    set_airport();
     XPLMRegisterFlightLoopCallback(DefaultAircraftLoopCB, 1.0, NULL);
     XPLMRegisterKeySniffer(
             MyKeySniffer, 				/* Our callback. */
@@ -114,6 +116,26 @@ PLUGIN_API void	XPluginStop(void){
 PLUGIN_API void XPluginDisable(void) {}
 PLUGIN_API int  XPluginEnable(void)  { return 1; }
 PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void * inParam){}
+
+void set_airport(){
+    std::ifstream in(current_config_file);
+    if (!in.good()){
+        std::cout << "Unable to read file" << std::endl;
+    }
+    std::string str;
+
+    std::regex rgx3("Departure airport is (.*), Arrival airport is (.*)");
+    std::smatch matches3;
+
+    while (std::getline(in, str)) {
+        if (!str.empty()) {
+            if(std::regex_search(str, matches3, rgx3)){
+                departing_airport = matches3[1];
+            }
+
+        }
+    }
+}
 
 void add_actions(){
     std::ifstream in(current_config_file);
