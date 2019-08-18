@@ -45,12 +45,38 @@ static QString insert_tlx {"Fill Out Survey"};
 static std::string airport_file {"/home/shine/CLionProjects/XPlane-MATB/airports.txt"};
 // End constanats declaration
 
-//Important Links
-// https://regex101.com/r/sCM1wj/1
 
-QString difficulty_string_generator(QString difficulty, QString rain_percent, QString wind_percent, QString duration, QString day_or_night){
-    QString return_string = difficulty + " Rain % is "+rain_percent+" Wind % is "+wind_percent+" for "+duration+" seconds Time of the day is "+day_or_night;
+QString difficulty_string_generator(QString difficulty, QString rain_percent, QString wind_percent, QString duration, QString day_or_night, QString external_manip){
+    // Important Links
+    // https://regex101.com/r/sCM1wj/2
+    QString return_string = difficulty + " Rain % is "+rain_percent+" Wind % is "+wind_percent+" for "+duration+" seconds Time of the day is "+day_or_night + " External Manipulation : "+external_manip;
     return return_string;
+}
+
+QString airport_string_generator(QString arrival_airport, QString departure_airport){
+    // Regex Link
+    // https://regex101.com/r/pYWRLT/1
+    std::map<std::string, std::string>::iterator departure_iterator;
+    departure_iterator = airports_codes_map.find(departure_airport.toUtf8().constData());
+    if(departure_iterator == airports_codes_map.end()){
+        return nullptr;
+      }
+    std::map<std::string, std::string>::iterator arrival_iterator;
+    arrival_iterator = airports_codes_map.find(arrival_airport.toUtf8().constData());
+    if(arrival_iterator == airports_codes_map.end()){
+        return nullptr;
+      }
+    QString return_string = "Departure airport is " + QString::fromStdString(departure_iterator->second) + ", Arrival airport is " + QString::fromStdString(arrival_iterator->second);
+    return return_string;
+}
+
+QString get_full_airport_name(std::string airport_code){
+    for(auto const &x: airports_codes_map){
+        if(x.second == airport_code){
+            return QString::fromStdString(x.first);
+        }
+    }
+    return nullptr;
 }
 
 void MATBWindow::add_airports(){
@@ -68,7 +94,6 @@ void MATBWindow::add_airports(){
             airports_codes_map.emplace(matches.str(1), matches.str(2));
             ui->departure_airport->addItem(QString::fromStdString(matches.str(1)));
             ui->arrival_airport->addItem(QString::fromStdString(matches.str(1)));
-
         }
     }
 
@@ -226,13 +251,15 @@ void MATBWindow::on_Gen_script_clicked(){
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
     QTextStream out(&file);
-    out << difficulty_string_generator("ld", ui->rain_percent_ld->toPlainText(), ui->wind_percent_ld->toPlainText(), ui->duration_time_ld->toPlainText(), ui->day_or_night_ld->currentText());
+    out << difficulty_string_generator("ld", ui->rain_percent_ld->toPlainText(), ui->wind_percent_ld->toPlainText(), ui->duration_time_ld->toPlainText(), ui->day_or_night_ld->currentText(), ui->external_mani_ld->toPlainText());
     out << "\n";
-    out << difficulty_string_generator("md", ui->rain_percent_md->toPlainText(), ui->wind_percent_md->toPlainText(), ui->duration_time_md->toPlainText(), ui->day_or_night_md->currentText());
+    out << difficulty_string_generator("md", ui->rain_percent_md->toPlainText(), ui->wind_percent_md->toPlainText(), ui->duration_time_md->toPlainText(), ui->day_or_night_md->currentText(), ui->external_mani_md->toPlainText());
     out << "\n";
-    out << difficulty_string_generator("hd", ui->rain_percent_hd->toPlainText(), ui->wind_percent_hd->toPlainText(), ui->duration_time_hd->toPlainText(), ui->day_or_night_hd->currentText());
+    out << difficulty_string_generator("hd", ui->rain_percent_hd->toPlainText(), ui->wind_percent_hd->toPlainText(), ui->duration_time_hd->toPlainText(), ui->day_or_night_hd->currentText(), ui->external_mani_hd->toPlainText());
     out << "\n";
     out << "Rest duration is: " << ui->duration_time_rest->toPlainText();
+    out << "\n";
+    out << airport_string_generator(ui->arrival_airport->currentText(), ui->departure_airport->currentText());
     out << "\n";
     QList<QPushButton *> butts = my_button_window->findChildren<QPushButton *>();
     for (const auto *but: butts) {
@@ -252,71 +279,68 @@ void MATBWindow::load_file_clicked(QAction* test){
                                                       "/home",
                                                       ("Conf Files (*.conf)"));
     std::cout << fileName.toUtf8().constData() << std::endl;
-    std::regex rgx("((l|m|h)d) Rain % is (\\d*) Wind % is (\\d*) for (\\d*) seconds Time of the day is (Day|Night)");
-    std::smatch matches;
+    std::regex rgx1("((l|m|h)d) Rain % is (\\d*) Wind % is (\\d*) for (\\d*) seconds Time of the day is (Day|Night) External Manipulation : (.*)");
+    std::smatch matches1;
+    std::regex rgx2("Rest duration is: (\\d+)");
+    std::smatch matches2;
+    std::regex rgx3("Departure airport is (.*), Arrival airport is (.*)");
+    std::smatch matches3;
     std::string str;
     std::ifstream input_file(fileName.toUtf8().constData());
     if (!input_file.good()){
-        std::cout << "Unable to read file" << std::endl;
+        std::cout << "Unable to read configuration file" << std::endl;
     }
-    int counter {1};
     bool okay {true};
     while (std::getline(input_file, str)) {
-        if (counter < 4){
-            if(std::regex_search(str, matches, rgx)){
-                if (matches[1] == "ld"){
-                    if(ui->rain_percent_ld->toPlainText().toUtf8().constData() == matches[3]
-                            && ui->wind_percent_ld->toPlainText().toUtf8().constData() == matches[4]
-                            && ui->duration_time_ld->toPlainText().toUtf8().constData() == matches[5]
-                            && ui->day_or_night_ld->currentText().toUtf8().constData() == matches[6] ){
-
-                    }else {
-                        QString custom_msg = QString::fromStdString("This line does not match original requirements at the time of saving file "+str);
-                        send_message(custom_msg);
-                        okay = false;
-                        break;
-                            }
-                } else if(matches[1] == "md"){
-                    if(ui->rain_percent_md->toPlainText().toUtf8().constData() == matches[3]
-                            && ui->wind_percent_md->toPlainText().toUtf8().constData() == matches[4]
-                            && ui->duration_time_md->toPlainText().toUtf8().constData() == matches[5]
-                            && ui->day_or_night_md->currentText().toUtf8().constData() == matches[6] ){
-
-                    }else {
-                                QString custom_msg = QString::fromStdString("This line does not match original requirements at the time of saving file "+str);
-                                send_message(custom_msg);
-                                okay = false;
-                                break;
-                            }
-                } else if(matches[1] == "hd"){
-                    if(ui->rain_percent_hd->toPlainText().toUtf8().constData() == matches[3]
-                            && ui->wind_percent_hd->toPlainText().toUtf8().constData() == matches[4]
-                            && ui->duration_time_hd->toPlainText().toUtf8().constData() == matches[5]
-                            && ui->day_or_night_hd->currentText().toUtf8().constData() == matches[6] ){
-
-                    }else {
-                        QString custom_msg = QString::fromStdString("This line does not match original requirements at the time of saving file "+str);
-                        send_message(custom_msg);
-                        okay = false;
-                        break;
-                            }
-                }
-            } else{
-                QString custom_msg = QString::fromStdString("This line aint recognized by regex: "+str);
-                send_message(custom_msg);
-                break;
+        if(std::regex_search(str, matches1, rgx1)){
+            if (matches1[1] == "ld"){
+                ui->rain_percent_ld->setText(QString::fromStdString(matches1[3]));
+                ui->wind_percent_ld->setText(QString::fromStdString(matches1[4]));
+                ui->duration_time_ld->setText(QString::fromStdString(matches1[5]));
+                int index {ui->day_or_night_ld->findText(QString::fromStdString(matches1[6]))};
+                ui->day_or_night_ld->setCurrentIndex(index);
+                ui->external_mani_ld->setText(QString::fromStdString(matches1[7]));
+            } else if(matches1[1] == "md"){
+                ui->rain_percent_md->setText(QString::fromStdString(matches1[3]));
+                ui->wind_percent_md->setText(QString::fromStdString(matches1[4]));
+                ui->duration_time_md->setText(QString::fromStdString(matches1[5]));
+                int index {ui->day_or_night_md->findText(QString::fromStdString(matches1[6]))};
+                ui->day_or_night_md->setCurrentIndex(index);
+                ui->external_mani_md->setText(QString::fromStdString(matches1[7]));
+            } else if(matches1[1] == "hd"){
+                ui->rain_percent_hd->setText(QString::fromStdString(matches1[3]));
+                ui->wind_percent_hd->setText(QString::fromStdString(matches1[4]));
+                ui->duration_time_hd->setText(QString::fromStdString(matches1[5]));
+                int index {ui->day_or_night_hd->findText(QString::fromStdString(matches1[6]))};
+                ui->day_or_night_hd->setCurrentIndex(index);
+                ui->external_mani_hd->setText(QString::fromStdString(matches1[7]));
             }
-            ++counter;
-        } else {
-            if (str == low_difficulty.toStdString() || str == moderate_difficulty.toStdString() || str == high_difficulty.toStdString() || str == insert_tlx.toStdString()){
-                add_buttons_to_list(QString::fromStdString(str));
-            }else {
-                QString custom_msg = QString::fromStdString("This line is not recognized "+str);
-                send_message(custom_msg);
+        }
+        else if(std::regex_search(str, matches2, rgx2)){
+            ui->duration_time_rest->setText(QString::fromStdString(matches2[1]));
+        }
+        else if(std::regex_search(str, matches3, rgx3)){
+            QString departure_airport {get_full_airport_name(matches3[1])};
+            if(departure_airport != nullptr){
+                int depart_index {ui->departure_airport->findText(departure_airport)};
+                ui->departure_airport->setCurrentIndex(depart_index);
+            } else{
                 okay = false;
-                break;
-
-                    }
+            }
+            QString arrival_airport {get_full_airport_name(matches3[2])};
+            if(arrival_airport != nullptr){
+                int arrival_index {ui->departure_airport->findText(arrival_airport)};
+                ui->arrival_airport->setCurrentIndex(arrival_index);
+            }else{
+                okay = false;
+            }
+        } else if(str == low_difficulty.toStdString() || str == moderate_difficulty.toStdString() || str == high_difficulty.toStdString() || str == insert_tlx.toStdString()){
+            add_buttons_to_list(QString::fromStdString(str));
+        } else{
+            QString custom_msg = QString::fromStdString("This line is not recognized "+str);
+            send_message(custom_msg);
+            okay = false;
+            break;
         }
     }
     if(okay){

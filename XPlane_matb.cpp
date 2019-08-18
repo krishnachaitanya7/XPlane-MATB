@@ -47,6 +47,7 @@ std::string insert_tlx {"Fill Out Survey"};
 bool rest_next {false};
 int rain_ld, wind_ld, duration_ld, rain_md, wind_md, duration_md, rain_hd, wind_hd, duration_hd;
 std::string day_night_ld, day_night_md, day_night_hd;
+std::string external_manipulation_ld, external_manipulation_md, external_manipulation_hd;
 const float min_cruise_height {500};
 int start_sim_immediately {10000};
 static std::fstream log_file;
@@ -54,6 +55,7 @@ std::string plugin_log_file {""};
 std::string current_config_file;
 static int rest_time {0};
 bool aircraftloaded {false};
+std::string departing_airport;
 void add_actions();
 void change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night);
 static char *getDtTm (char *buff);
@@ -113,19 +115,20 @@ PLUGIN_API void XPluginDisable(void) {}
 PLUGIN_API int  XPluginEnable(void)  { return 1; }
 PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void * inParam){}
 
-
-
 void add_actions(){
     std::ifstream in(current_config_file);
     if (!in.good()){
         std::cout << "Unable to read file" << std::endl;
     }
     std::string str;
-    std::regex rgx("((l|m|h)d) Rain % is (\\d*) Wind % is (\\d*) for (\\d*) seconds Time of the day is (Day|Night)");
+    std::regex rgx("((l|m|h)d) Rain % is (\\d*) Wind % is (\\d*) for (\\d*) seconds Time of the day is (Day|Night) External Manipulation : (.*)");
     std::smatch matches;
 
     std::regex rgx2("Rest duration is: (\\d+)");
     std::smatch matches2;
+
+    std::regex rgx3("Departure airport is (.*), Arrival airport is (.*)");
+    std::smatch matches3;
 
     while (std::getline(in, str)) {
         if (!str.empty()) {
@@ -135,20 +138,24 @@ void add_actions(){
                     wind_ld = std::stoi(matches[4]);
                     duration_ld = std::stoi(matches[5]);
                     day_night_ld = matches[6];
+                    external_manipulation_ld = matches[7];
                 } else if(matches[1] == "md"){
                     rain_md = std::stoi(matches[3]);
                     wind_md = std::stoi(matches[4]);
                     duration_md = std::stoi(matches[5]);
                     day_night_md = matches[6];
+                    external_manipulation_md = matches[7];
                 } else if(matches[1] == "hd"){
                     rain_hd = std::stoi(matches[3]);
                     wind_hd = std::stoi(matches[4]);
                     duration_hd = std::stoi(matches[5]);
                     day_night_hd = matches[6];
-
+                    external_manipulation_hd = matches[7];
                 }
             } else if(std::regex_search(str, matches2, rgx2)){
                 rest_time = std::stoi(matches2[1]);
+            } else if(std::regex_search(str, matches3, rgx3)){
+                departing_airport = matches3[1];
             } else{
                 if(str == low_difficulty || str == moderate_difficulty || str == high_difficulty || str == insert_tlx){
                     if(str == low_difficulty){
@@ -196,26 +203,24 @@ int MyKeySniffer(
                 std::string present_action = actions.front();
                 actions.erase(actions.begin());
                 if (present_action == low_difficulty) {
-                    write_to_log(low_difficulty);
-                    std::cout << "Changing weather to: " << low_difficulty << std::endl;
+                    write_to_log(low_difficulty + " External Manipulation: "+external_manipulation_ld);
+                    std::cout << "Changing weather to: " << low_difficulty + " External Manipulation: "+external_manipulation_ld << std::endl;
                     change_weather(rain_ld, wind_ld, duration_ld, day_night_ld);
                     rest_next = !(actions.front() == insert_tlx);
-
                 } else if (present_action == moderate_difficulty) {
-                    write_to_log(moderate_difficulty);
-                    std::cout << "Changing weather to: " << moderate_difficulty << std::endl;
+                    write_to_log(moderate_difficulty + " External Manipulation: "+external_manipulation_md);
+                    std::cout << "Changing weather to: " << moderate_difficulty + " External Manipulation: "+external_manipulation_md << std::endl;
                     change_weather(rain_md, wind_md, duration_md, day_night_md);
                     rest_next = !(actions.front() == insert_tlx);
                 } else if (present_action == high_difficulty) {
-                    write_to_log(high_difficulty);
-                    std::cout << "Changing weather to: " << high_difficulty << std::endl;
+                    write_to_log(high_difficulty + " External Manipulation: "+external_manipulation_hd);
+                    std::cout << "Changing weather to: " << high_difficulty + " External Manipulation: "+external_manipulation_hd << std::endl;
                     change_weather(rain_hd, wind_hd, duration_hd, day_night_hd);
                     rest_next = !(actions.front() == insert_tlx);
                 } else if (present_action == insert_tlx) {
                     write_to_log(insert_tlx);
                     std::cout << "Please Complete the Survey" << std::endl;
                     XPLMCommandOnce(XPLMFindCommand("sim/operation/pause_toggle"));
-
                 }
             } else {
                 std::cout << "Weather Changing Complete. So starting again" << std::endl;
@@ -233,7 +238,7 @@ int MyKeySniffer(
             sleep_for_me(2);
         } else{
             std::cout << "The height is: " << current_height << std::endl;
-            sleep_for_me(1);
+            sleep_for_me(2);
         }
     }
     else if ((int)gChar == 80 and (gFlags & xplm_ShiftFlag) and (gFlags & xplm_UpFlag)){
@@ -323,7 +328,7 @@ void write_to_log(std::string &write_text){
 
 float DefaultAircraftLoopCB(float elapsedMe, float elapsedSim, int counter, void * refcon){
     if(!aircraftloaded){
-        XPLMPlaceUserAtAirport("EDPQ");
+        XPLMPlaceUserAtAirport(departing_airport.c_str());
         aircraftloaded = true;
     }
     return 1.0;

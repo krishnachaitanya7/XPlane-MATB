@@ -1,7 +1,6 @@
 project(shine-lab-plugin)
 set(CMAKE_CXX_STANDARD 14)
 cmake_minimum_required(VERSION 3.14)
-add_definitions(-D_GLIBCXX_USE_CXX11_ABI=0)
 ## Setting Up Qt
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -14,8 +13,8 @@ include_directories("/usr/local/include")
 include_directories( ${Boost_INCLUDE_DIR} )
 set(CMAKE_CXX_FLAGS "-shared -rdynamic -nodefaultlibs -undefined_warning -fPIC -Wall -Wextra -std=c++0x -pthread")
 add_definitions(-DAPL=0 -DIBM=0 -DLIN=1 -DXPLM200=1 -DXPLM210=1 -DXPLM300=1 -DXPLM301=1)
-set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -gdwarf-3")
-set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -gdwarf-3")
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -g3 -ggdb -gdwarf-4 -femit-class-debug-always")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g -g3 -ggdb -gdwarf-4 -femit-class-debug-always")
 # End
 # CMake for Qt
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -32,3 +31,5 @@ add_executable(qt_xplane_test
 target_link_libraries(qt_xplane_test Qt5::Core Qt5::Gui Qt5::Widgets ${Boost_FILESYSTEM_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}
         ${Boost_REGEX_LIBRARY})
+
+
