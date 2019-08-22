@@ -11,7 +11,6 @@ def keypress_shift_v():
     pyautogui.press('v')
     pyautogui.keyUp('shift')
 
-
 def keypress_shift_b():
     subprocess.call(['wmctrl', '-a', 'X-System'])
     time.sleep(1)

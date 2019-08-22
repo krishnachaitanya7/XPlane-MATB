@@ -257,10 +257,10 @@ int MyKeySniffer(
             std::cout << "The cruise height reached is: " << current_height << std::endl;
             write_to_log("Minimum Cruise level Achieved: "+std::to_string(current_height));
             add_actions();
-            sleep_for_me(2);
+            sleep_for_me(1);
         } else{
             std::cout << "The height is: " << current_height << std::endl;
-            sleep_for_me(2);
+            sleep_for_me(1);
         }
     }
     else if ((int)gChar == 80 and (gFlags & xplm_ShiftFlag) and (gFlags & xplm_UpFlag)){
@@ -351,6 +351,7 @@ void write_to_log(std::string &write_text){
 float DefaultAircraftLoopCB(float elapsedMe, float elapsedSim, int counter, void * refcon){
     if(!aircraftloaded){
         XPLMPlaceUserAtAirport(departing_airport.c_str());
+
         aircraftloaded = true;
     }
     return 1.0;
