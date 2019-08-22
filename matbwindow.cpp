@@ -15,6 +15,8 @@
 #include <QFileDialog>
 #include <fstream>
 #include <QPalette>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 
 // Start Global Static Variables
 static QVBoxLayout *test;
