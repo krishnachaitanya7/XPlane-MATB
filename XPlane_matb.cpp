@@ -75,7 +75,7 @@ bool aircraftloaded {false};
 std::string departing_airport;
 std::string thank_you_note {"Thank you for your participation"};
 void add_actions();
-void send_thankyou(std::string &send_msg);
+int send_thankyou(std::string &send_msg);
 void set_airport();
 void change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night);
 static char *getDtTm (char *buff);
@@ -167,10 +167,15 @@ void set_airport(){
     }
 }
 
-void send_thankyou(std::string &send_msg){
+int send_thankyou(std::string &send_msg){
+    int argc {1};
+    char test_argv {'Q'};
+    char *y = &test_argv;
+    char **argv = &y;
+    QApplication a(argc, argv);
     QMessageBox msgBox;
     msgBox.setText(QString::fromStdString(send_msg));
-    msgBox.exec();
+    return msgBox.exec();
 }
 
 void add_actions(){
@@ -284,7 +289,7 @@ int MyKeySniffer(
             } else {
                 std::cout << "Weather Changing Complete. Simulation of MATB complete. Exiting Cleanly" << std::endl;
                 send_thankyou(thank_you_note);
-                exit (EXIT_SUCCESS);
+
             }
         }
     }
