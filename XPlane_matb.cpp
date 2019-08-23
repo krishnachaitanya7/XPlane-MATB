@@ -83,6 +83,14 @@ int start_rest_screen(int &countdown_seconds);
 void show_rest_screen(int &countdown_seconds);
 std::string get_config_file();
 float DefaultAircraftLoopCB(float elapsedMe, float elapsedSim, int counter, void * refcon);
+
+template <typename T> std::vector<T> as_vector(pt::ptree const& pt, pt::ptree::key_type const& key){
+    std::vector<T> r;
+    for (auto& item : pt.get_child(key))
+        r.push_back(item.second.get_value<T>());
+    return r;
+}
+
 static int MyKeySniffer(
         char                 inChar,
         XPLMKeyFlags         inFlags,
@@ -156,7 +164,6 @@ void set_airport(){
 }
 
 void add_actions(){
-
     std::string filename_in_stdstring = current_config_file;
     pt::ptree root;
     pt::read_json(filename_in_stdstring, root);
@@ -215,6 +222,7 @@ void add_actions(){
             }
         }
     }
+    actions = as_vector<std::string>(root, action_list_string);
 }
 
 int MyKeySniffer(
@@ -256,9 +264,7 @@ int MyKeySniffer(
                     XPLMCommandOnce(XPLMFindCommand("sim/operation/pause_toggle"));
                 }
             } else {
-                std::cout << "Weather Changing Complete. So starting again" << std::endl;
-                add_actions();
-                sleep_for_me(10);
+                std::cout << "Weather Changing Complete.Add your thank you note here" << std::endl;
             }
         }
     }
@@ -268,7 +274,7 @@ int MyKeySniffer(
             std::cout << "The cruise height reached is: " << current_height << std::endl;
             write_to_log("Minimum Cruise level Achieved: "+std::to_string(current_height));
             add_actions();
-            sleep_for_me(1);
+            sleep_for_me(2);
         } else{
             std::cout << "The height is: " << current_height << std::endl;
             sleep_for_me(1);
@@ -362,7 +368,6 @@ void write_to_log(std::string &write_text){
 float DefaultAircraftLoopCB(float elapsedMe, float elapsedSim, int counter, void * refcon){
     if(!aircraftloaded){
         XPLMPlaceUserAtAirport(departing_airport.c_str());
-
         aircraftloaded = true;
     }
     return 1.0;
