@@ -370,6 +370,12 @@ void change_weather(int &rain, int &wind, int &duration_time, std::string &day_o
     XPLMSetDataf(XPLMFindDataRef("sim/weather/rain_percent"), rain_percent);
     XPLMSetDataf(XPLMFindDataRef("sim/weather/thunderstorm_percent"), wind_percent);
     XPLMSetDatai(XPLMFindDataRef("sim/weather/cloud_type[0]"), 5);
+    if(day_or_night == "Day"){
+        XPLMSetDataf(XPLMFindDataRef("sim/time/zulu_time_sec"), 69744.0);
+    } else{
+        XPLMSetDataf(XPLMFindDataRef("sim/time/zulu_time_sec"), 30000.0);
+    }
+
     sleep_for_me(duration_time);
 }
 
