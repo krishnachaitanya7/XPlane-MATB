@@ -39,6 +39,7 @@ static std::string arrival_airport_string {"Arrival_Airport"};
 static std::string airport_code_string {"Airport_Code"};
 static std::string airport_height_string {"Airport_Base_Height"};
 static std::string action_list_string {"Actions_List"};
+static std::string rest_string {"Rest"};
 // End Global Static Variables
 // Start Constant Declaration. Only edit here
 static int duration_ld {20};
@@ -275,6 +276,8 @@ void MATBWindow::on_Gen_script_clicked(){
     file.open(QIODevice::WriteOnly);
     QTextStream out(&file);
     pt::ptree write_file_root;
+    // Write Rest String
+    write_file_root.put(rest_string, ui->duration_time_rest->toPlainText().toUtf8().constData());
     // Write Low difficulty JSON
     write_file_root.put(low_difficulty+"."+wind_percent_string, std::stoi(ui->wind_percent_ld->toPlainText().toUtf8().constData()));
     write_file_root.put(low_difficulty+"."+rain_percent_string, std::stoi(ui->rain_percent_ld->toPlainText().toUtf8().constData()));
@@ -430,6 +433,8 @@ void MATBWindow::load_file_clicked(QAction* test){
 
         }
     }
+    // Set Rest
+    ui->duration_time_rest->setText(QString::number(root.get<int>(rest_string, -1)));
 
 
 }

@@ -27,6 +27,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QMessageBox>
 
 #elif __GNUC__
 #include <OpenGL/gl.h>
@@ -50,6 +51,7 @@ static std::string arrival_airport_string {"Arrival_Airport"};
 static std::string airport_code_string {"Airport_Code"};
 static std::string airport_height_string {"Airport_Base_Height"};
 static std::string action_list_string {"Actions_List"};
+static std::string rest_string {"Rest"};
 std::string homeDir;
 static XPLMKeyFlags	gFlags = 0;
 static char	gVirtualKey = 0;
@@ -71,7 +73,9 @@ std::string current_config_file;
 static int rest_time {0};
 bool aircraftloaded {false};
 std::string departing_airport;
+std::string thank_you_note {"Thank you for your participation"};
 void add_actions();
+void send_thankyou(std::string &send_msg);
 void set_airport();
 void change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night);
 static char *getDtTm (char *buff);
@@ -163,6 +167,12 @@ void set_airport(){
     }
 }
 
+void send_thankyou(std::string &send_msg){
+    QMessageBox msgBox;
+    msgBox.setText(QString::fromStdString(send_msg));
+    msgBox.exec();
+}
+
 void add_actions(){
     std::string filename_in_stdstring = current_config_file;
     pt::ptree root;
@@ -222,7 +232,15 @@ void add_actions(){
             }
         }
     }
+    // Add actions
     actions = as_vector<std::string>(root, action_list_string);
+    // Add rest
+    rest_time = root.get<int>(rest_string, -1);
+    if(rest_time == -1){
+        std::cout << "No rest defined, exiting the XPlane" << std::endl;
+        exit (EXIT_FAILURE);
+    }
+
 }
 
 int MyKeySniffer(
@@ -264,7 +282,9 @@ int MyKeySniffer(
                     XPLMCommandOnce(XPLMFindCommand("sim/operation/pause_toggle"));
                 }
             } else {
-                std::cout << "Weather Changing Complete.Add your thank you note here" << std::endl;
+                std::cout << "Weather Changing Complete. Simulation of MATB complete. Exiting Cleanly" << std::endl;
+                send_thankyou(thank_you_note);
+                exit (EXIT_SUCCESS);
             }
         }
     }
