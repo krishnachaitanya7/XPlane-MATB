@@ -43,6 +43,12 @@ private slots:
 
     void add_buttons_to_list(QString button_text);
 
+    std::string get_full_airport_name(std::string airport_code);
+
+    std::string get_airport_code(std::string airport_name);
+
+    int get_airport_height(std::string airport_name);
+
 private:
     Ui::MATBWindow *ui;
 

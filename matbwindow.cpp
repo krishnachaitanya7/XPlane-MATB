@@ -18,84 +18,103 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 
+
+// Namespaces
+namespace pt = boost::property_tree;
 // Start Global Static Variables
 static QVBoxLayout *test;
 static QWidget *my_button_window;
 static QPushButton *last_clicked_button {nullptr};
 static std::map<std::string, std::string> airports_codes_map;
+static std::map<std::string, int> airports_altitude_map;
 static std::string arrival_port_default {"Select Arrival Airport"};
 static std::string departure_port_default {"Select Departure Airport"};
+static std::string wind_percent_string {"Wind_Percent"};
+static std::string rain_percent_string {"Rain_Percent"};
+static std::string duration_string {"Duration"};
+static std::string day_or_night_string {"Day_or_Night"};
+static std::string external_manipulation_string {"External_Manipulation"};
+static std::string departure_airport_string {"Departure_Airport"};
+static std::string arrival_airport_string {"Arrival_Airport"};
+static std::string airport_code_string {"Airport_Code"};
+static std::string airport_height_string {"Airport_Base_Height"};
+static std::string action_list_string {"Actions_List"};
 // End Global Static Variables
 // Start Constant Declaration. Only edit here
 static int duration_ld {20};
 static int rain_ld {0};
 static int wind_ld {0};
-static QString day_night_ld = "Day";
+static std::string day_night_ld = "Day";
 static int duration_md {20};
 static int rain_md {50};
 static int wind_md {50};
-static QString day_night_md = "Day";
+static std::string day_night_md = "Day";
 static int duration_hd {20};
 static int rain_hd {99};
 static int wind_hd {99};
-static QString day_night_hd = "Day";
+static std::string day_night_hd = "Day";
 static int rest_seconds {15};
-static QString low_difficulty {"Low Difficulty"};
-static QString moderate_difficulty {"Moderate Difficulty"};
-static QString high_difficulty {"High Difficulty"};
-static QString insert_tlx {"Fill Out Survey"};
-static std::string airport_file {"/home/shine/CLionProjects/XPlane-MATB/airports.txt"};
+static std::string low_difficulty {"Low Difficulty"};
+static std::string moderate_difficulty {"Moderate Difficulty"};
+static std::string high_difficulty {"High Difficulty"};
+static std::string insert_tlx {"Fill Out Survey"};
+static std::string homedir;
+static std::string airport_file;
 // End constanats declaration
+void send_message(QString send_msg);
 
-
-QString difficulty_string_generator(QString difficulty, QString rain_percent, QString wind_percent, QString duration, QString day_or_night, QString external_manip){
-    // Important Links
-    // https://regex101.com/r/sCM1wj/2
-    QString return_string = difficulty + " Rain % is "+rain_percent+" Wind % is "+wind_percent+" for "+duration+" seconds Time of the day is "+day_or_night + " External Manipulation : "+external_manip;
-    return return_string;
-}
-
-QString airport_string_generator(QString arrival_airport, QString departure_airport){
-    // Regex Link
-    // https://regex101.com/r/pYWRLT/1
-    std::map<std::string, std::string>::iterator departure_iterator;
-    departure_iterator = airports_codes_map.find(departure_airport.toUtf8().constData());
-    if(departure_iterator == airports_codes_map.end()){
-        return nullptr;
-      }
-    std::map<std::string, std::string>::iterator arrival_iterator;
-    arrival_iterator = airports_codes_map.find(arrival_airport.toUtf8().constData());
-    if(arrival_iterator == airports_codes_map.end()){
-        return nullptr;
-      }
-    QString return_string = "Departure airport is " + QString::fromStdString(departure_iterator->second) + ", Arrival airport is " + QString::fromStdString(arrival_iterator->second);
-    return return_string;
-}
-
-QString get_full_airport_name(std::string airport_code){
+std::string MATBWindow::get_full_airport_name(std::string airport_code){
     for(auto const &x: airports_codes_map){
         if(x.second == airport_code){
-            return QString::fromStdString(x.first);
+            return x.first;
         }
     }
-    return nullptr;
+    send_message(QString::fromStdString("Airport name not found for this code. Checks airports.json and add this code: "+airport_code+" Exiting now"));
+    this->close();
+}
+
+std::string MATBWindow::get_airport_code(std::string airport_name){
+    // Regex Link
+    // https://regex101.com/r/pYWRLT/1
+    std::map<std::string, std::string>::iterator airport_iterator;
+    airport_iterator = airports_codes_map.find(airport_name);
+    if(airport_iterator == airports_codes_map.end()){
+        send_message(QString::fromStdString("Airport code not found. Checks airports.json for this airport name: "+airport_name+" Exiting now"));
+        this->close();
+      }
+    return airport_iterator->second;
+}
+
+int MATBWindow::get_airport_height(std::string airport_name){
+    // Regex Link
+    // https://regex101.com/r/pYWRLT/1
+    std::map<std::string, int>::iterator airport_iterator;
+    airport_iterator = airports_altitude_map.find(airport_name);
+    if(airport_iterator == airports_altitude_map.end()){
+        send_message(QString::fromStdString("Airport Height not found. Checks airports.json for this airport name: "+airport_name+" Exiting now"));
+        this->close();
+      }
+    return airport_iterator->second;
 }
 
 void MATBWindow::add_airports(){
-    std::regex rgx("(.*) - (.*)");
-    std::smatch matches;
-    std::string str;
-    std::ifstream input_file(airport_file);
-    if (!input_file.good()){
-        std::cout << "Unable to read file" << std::endl;
-    }
+    pt::ptree root;
+    pt::read_json(airport_file, root);
     ui->departure_airport->addItem(QString::fromStdString(departure_port_default));
     ui->arrival_airport->addItem(QString::fromStdString(arrival_port_default));
-    while (std::getline(input_file, str)) {
-        if(std::regex_search(str, matches, rgx)){
-            airports_codes_map.emplace(matches.str(1), matches.str(2));
-            ui->departure_airport->addItem(QString::fromStdString(matches.str(1)));
-            ui->arrival_airport->addItem(QString::fromStdString(matches.str(1)));
+    for (pt::ptree::value_type &airport : root){
+        std::string airport_name = airport.first;
+        ui->departure_airport->addItem(QString::fromStdString(airport_name));
+        ui->arrival_airport->addItem(QString::fromStdString(airport_name));
+        for(pt::ptree::value_type &airport_contents : root.get_child(airport_name)){
+            if(airport_contents.first == airport_code_string){
+                std::string airport_code = airport_contents.second.data();
+                airports_codes_map.emplace(airport_name, airport_code);
+            } else if(airport_contents.first == airport_height_string){
+                int airport_height = std::stoi(airport_contents.second.data());
+                airports_altitude_map.emplace(airport_name, airport_height);
+
+            }
         }
     }
 
@@ -135,10 +154,6 @@ void send_message(QString send_msg){
     msgBox.exec();
 }
 
-QString get_config_string(QString rain_percent, QString wind_percent, QString duration_time, QString time_of_day){
-    QString conf_string = "Rain % is "+rain_percent+" Wind % is "+wind_percent+" for "+duration_time+" seconds Time of the day is "+time_of_day;
-    return conf_string;
-}
 
 void MATBWindow::dynamic_buttons_clicked(){
     QPushButton* buttonClicked = qobject_cast<QPushButton*>(sender()); // retrieve the button you have clicked
@@ -156,7 +171,11 @@ MATBWindow::MATBWindow(QWidget *parent) :
     ui(new Ui::MATBWindow)
 {
     // Setting Up the Scroll Area
-    ui->setupUi(this);    
+    ui->setupUi(this);
+    // Get environment Variables
+    homedir = getenv("HOME");
+    airport_file = homedir + "/xplane_plugin_files/airports.json";
+    // End
     QWidget *window = new QWidget;
     QVBoxLayout *events_list = new QVBoxLayout;
     test = events_list;
@@ -172,6 +191,8 @@ MATBWindow::MATBWindow(QWidget *parent) :
     add_airports();
     // Menu Actions
     connect(ui->menuXPlane_MATB, SIGNAL(triggered(QAction*)), this, SLOT(load_file_clicked(QAction*)));
+
+
 
 }
 
@@ -194,7 +215,7 @@ void MATBWindow::on_sel_ld_clicked(){
     QString time_of_day = ui->day_or_night_ld->currentText();
     QRegExp re("\\d*");
     if (re.exactMatch(rain_percent) && re.exactMatch(wind_percent) && re.exactMatch(duration_time)){
-        QPushButton *button6 = new QPushButton(low_difficulty);
+        QPushButton *button6 = new QPushButton(QString::fromStdString(low_difficulty));
         connect(button6, SIGNAL(clicked()), this, SLOT(dynamic_buttons_clicked()));
         test->addWidget(button6);
     } else{
@@ -209,7 +230,7 @@ void MATBWindow::on_sel_md_clicked(){
     QString time_of_day = ui->day_or_night_md->currentText();
     QRegExp re("\\d*");
     if (re.exactMatch(rain_percent) && re.exactMatch(wind_percent) && re.exactMatch(duration_time)){
-        QPushButton *button6 = new QPushButton(moderate_difficulty);
+        QPushButton *button6 = new QPushButton(QString::fromStdString(moderate_difficulty));
         connect(button6, SIGNAL(clicked()), this, SLOT(dynamic_buttons_clicked()));
         test->addWidget(button6);
     } else{
@@ -224,7 +245,7 @@ void MATBWindow::on_sel_hd_clicked(){
     QString time_of_day = ui->day_or_night_hd->currentText();
     QRegExp re("\\d*");
     if (re.exactMatch(rain_percent) && re.exactMatch(wind_percent) && re.exactMatch(duration_time)){
-        QPushButton *button6 = new QPushButton(high_difficulty);
+        QPushButton *button6 = new QPushButton(QString::fromStdString(high_difficulty));
         connect(button6, SIGNAL(clicked()), this, SLOT(dynamic_buttons_clicked()));
         test->addWidget(button6);
     } else{
@@ -233,7 +254,7 @@ void MATBWindow::on_sel_hd_clicked(){
 }
 
 void MATBWindow::on_insert_tlx_clicked(){
-    QPushButton *button6 = new QPushButton(insert_tlx);
+    QPushButton *button6 = new QPushButton(QString::fromStdString(insert_tlx));
     connect(button6, SIGNAL(clicked()), this, SLOT(dynamic_buttons_clicked()));
     test->addWidget(button6);
 }
@@ -249,25 +270,55 @@ void MATBWindow::on_del_condition_clicked(){
 void MATBWindow::on_Gen_script_clicked(){
     QString fileName = QFileDialog::getSaveFileName(this,
             tr("Save MATB Conf File"), "",
-            tr("Conf file (*.conf);;All Files (*)"));
+            tr("Conf file in JSON (*.json);;All Files (*)"));
     QFile file(fileName);
     file.open(QIODevice::WriteOnly);
     QTextStream out(&file);
-    out << difficulty_string_generator("ld", ui->rain_percent_ld->toPlainText(), ui->wind_percent_ld->toPlainText(), ui->duration_time_ld->toPlainText(), ui->day_or_night_ld->currentText(), ui->external_mani_ld->toPlainText());
-    out << "\n";
-    out << difficulty_string_generator("md", ui->rain_percent_md->toPlainText(), ui->wind_percent_md->toPlainText(), ui->duration_time_md->toPlainText(), ui->day_or_night_md->currentText(), ui->external_mani_md->toPlainText());
-    out << "\n";
-    out << difficulty_string_generator("hd", ui->rain_percent_hd->toPlainText(), ui->wind_percent_hd->toPlainText(), ui->duration_time_hd->toPlainText(), ui->day_or_night_hd->currentText(), ui->external_mani_hd->toPlainText());
-    out << "\n";
-    out << "Rest duration is: " << ui->duration_time_rest->toPlainText();
-    out << "\n";
-    out << airport_string_generator(ui->arrival_airport->currentText(), ui->departure_airport->currentText());
-    out << "\n";
+    pt::ptree write_file_root;
+    // Write Low difficulty JSON
+    write_file_root.put(low_difficulty+"."+wind_percent_string, std::stoi(ui->wind_percent_ld->toPlainText().toUtf8().constData()));
+    write_file_root.put(low_difficulty+"."+rain_percent_string, std::stoi(ui->rain_percent_ld->toPlainText().toUtf8().constData()));
+    write_file_root.put(low_difficulty+"."+duration_string, std::stoi(ui->duration_time_ld->toPlainText().toUtf8().constData()));
+    write_file_root.put(low_difficulty+"."+day_or_night_string, ui->day_or_night_ld->currentText().toUtf8().constData());
+    write_file_root.put(low_difficulty+"."+external_manipulation_string, ui->external_mani_ld->toPlainText().toUtf8().constData());
+    // Write Moderate Difficulty JSON
+    write_file_root.put(moderate_difficulty+"."+wind_percent_string, std::stoi(ui->wind_percent_md->toPlainText().toUtf8().constData()));
+    write_file_root.put(moderate_difficulty+"."+rain_percent_string, std::stoi(ui->rain_percent_md->toPlainText().toUtf8().constData()));
+    write_file_root.put(moderate_difficulty+"."+duration_string, std::stoi(ui->duration_time_md->toPlainText().toUtf8().constData()));
+    write_file_root.put(moderate_difficulty+"."+day_or_night_string, ui->day_or_night_md->currentText().toUtf8().constData());
+    write_file_root.put(moderate_difficulty+"."+external_manipulation_string, ui->external_mani_md->toPlainText().toUtf8().constData());
+    // Write High Difficulty JSON
+    write_file_root.put(high_difficulty+"."+wind_percent_string, std::stoi(ui->wind_percent_hd->toPlainText().toUtf8().constData()));
+    write_file_root.put(high_difficulty+"."+rain_percent_string, std::stoi(ui->rain_percent_hd->toPlainText().toUtf8().constData()));
+    write_file_root.put(high_difficulty+"."+duration_string, std::stoi(ui->duration_time_hd->toPlainText().toUtf8().constData()));
+    write_file_root.put(high_difficulty+"."+day_or_night_string, ui->day_or_night_hd->currentText().toUtf8().constData());
+    write_file_root.put(high_difficulty+"."+external_manipulation_string, ui->external_mani_hd->toPlainText().toUtf8().constData());
+    // Write Airports JSON
+    write_file_root.put(departure_airport_string+"."+airport_code_string, get_airport_code(ui->departure_airport->currentText().toUtf8().constData()));
+    write_file_root.put(departure_airport_string+"."+airport_height_string, get_airport_height(ui->departure_airport->currentText().toUtf8().constData()));
+    write_file_root.put(arrival_airport_string+"."+airport_code_string, get_airport_code(ui->arrival_airport->currentText().toUtf8().constData()));
+    write_file_root.put(arrival_airport_string+"."+airport_height_string, get_airport_height(ui->arrival_airport->currentText().toUtf8().constData()));
+    // Write Action Strings
+    pt::ptree actions_list;
     QList<QPushButton *> butts = my_button_window->findChildren<QPushButton *>();
-    for (const auto *but: butts) {
-        out << but->text();
-        out << "\n";
+    for (const auto *but: butts){
+        pt::ptree each_action;
+        each_action.put("", but->text().toUtf8().constData());
+        actions_list.push_back(std::make_pair("", each_action));
     }
+    write_file_root.add_child(action_list_string, actions_list);
+    // Write JSON to file
+    static std::fstream final_config_file;
+    final_config_file.open(fileName.toUtf8().constData(), std::fstream::in | std::fstream::out | std::fstream::app);
+    if (!final_config_file )
+        {
+            std::cout << "Cannot open file, file does not exist. Creating new file..";
+            final_config_file.open(fileName.toUtf8().constData(),  std::fstream::in | std::fstream::out | std::fstream::trunc);
+            final_config_file.close();
+
+        }
+    pt::write_json(final_config_file, write_file_root);
+
 }
 
 void MATBWindow::add_buttons_to_list(QString button_text){
@@ -279,76 +330,106 @@ void MATBWindow::add_buttons_to_list(QString button_text){
 void MATBWindow::load_file_clicked(QAction* test){
     QString fileName = QFileDialog::getOpenFileName(this, ("Open File"),
                                                       "/home",
-                                                      ("Conf Files (*.conf)"));
+                                                      ("Conf Files (*.json)"));
     std::cout << fileName.toUtf8().constData() << std::endl;
-    std::regex rgx1("((l|m|h)d) Rain % is (\\d*) Wind % is (\\d*) for (\\d*) seconds Time of the day is (Day|Night) External Manipulation : (.*)");
-    std::smatch matches1;
-    std::regex rgx2("Rest duration is: (\\d+)");
-    std::smatch matches2;
-    std::regex rgx3("Departure airport is (.*), Arrival airport is (.*)");
-    std::smatch matches3;
-    std::string str;
-    std::ifstream input_file(fileName.toUtf8().constData());
-    if (!input_file.good()){
-        std::cout << "Unable to read configuration file" << std::endl;
-    }
-    bool okay {true};
-    while (std::getline(input_file, str)) {
-        if(std::regex_search(str, matches1, rgx1)){
-            if (matches1[1] == "ld"){
-                ui->rain_percent_ld->setText(QString::fromStdString(matches1[3]));
-                ui->wind_percent_ld->setText(QString::fromStdString(matches1[4]));
-                ui->duration_time_ld->setText(QString::fromStdString(matches1[5]));
-                int index {ui->day_or_night_ld->findText(QString::fromStdString(matches1[6]))};
-                ui->day_or_night_ld->setCurrentIndex(index);
-                ui->external_mani_ld->setText(QString::fromStdString(matches1[7]));
-            } else if(matches1[1] == "md"){
-                ui->rain_percent_md->setText(QString::fromStdString(matches1[3]));
-                ui->wind_percent_md->setText(QString::fromStdString(matches1[4]));
-                ui->duration_time_md->setText(QString::fromStdString(matches1[5]));
-                int index {ui->day_or_night_md->findText(QString::fromStdString(matches1[6]))};
-                ui->day_or_night_md->setCurrentIndex(index);
-                ui->external_mani_md->setText(QString::fromStdString(matches1[7]));
-            } else if(matches1[1] == "hd"){
-                ui->rain_percent_hd->setText(QString::fromStdString(matches1[3]));
-                ui->wind_percent_hd->setText(QString::fromStdString(matches1[4]));
-                ui->duration_time_hd->setText(QString::fromStdString(matches1[5]));
-                int index {ui->day_or_night_hd->findText(QString::fromStdString(matches1[6]))};
-                ui->day_or_night_hd->setCurrentIndex(index);
-                ui->external_mani_hd->setText(QString::fromStdString(matches1[7]));
+    std::string filename_in_stdstring {fileName.toUtf8().constData()};
+    pt::ptree root;
+    pt::read_json(filename_in_stdstring, root);
+    for (pt::ptree::value_type &each_element : root) {
+        std::string element_name = each_element.first;
+        if(element_name == low_difficulty){
+            for(pt::ptree::value_type &second_layer_elements : root.get_child(element_name)){
+                if(second_layer_elements.first == wind_percent_string){
+                    int wind_percent {std::stoi(second_layer_elements.second.data())};
+                    ui->wind_percent_ld->setText(QString::number(wind_percent));
+                } else if(second_layer_elements.first == rain_percent_string){
+                    int rain_percent {std::stoi(second_layer_elements.second.data())};
+                    ui->rain_percent_ld->setText(QString::number(rain_percent));
+                } else if(second_layer_elements.first == duration_string){
+                    int duration {std::stoi(second_layer_elements.second.data())};
+                    ui->duration_time_ld->setText(QString::number(duration));
+                } else if(second_layer_elements.first == day_or_night_string){
+                    int index {ui->day_or_night_ld->findText(QString::fromStdString(second_layer_elements.second.data()))};
+                    ui->day_or_night_ld->setCurrentIndex(index);
+                } else if(second_layer_elements.first == external_manipulation_string){
+                    ui->external_mani_ld->setText(QString::fromStdString(second_layer_elements.second.data()));
+                }
             }
-        }
-        else if(std::regex_search(str, matches2, rgx2)){
-            ui->duration_time_rest->setText(QString::fromStdString(matches2[1]));
-        }
-        else if(std::regex_search(str, matches3, rgx3)){
-            QString departure_airport {get_full_airport_name(matches3[1])};
-            if(departure_airport != nullptr){
-                int depart_index {ui->departure_airport->findText(departure_airport)};
-                ui->departure_airport->setCurrentIndex(depart_index);
-            } else{
-                okay = false;
+        } else if(element_name == moderate_difficulty){
+            for(pt::ptree::value_type &second_layer_elements : root.get_child(element_name)){
+                if(second_layer_elements.first == wind_percent_string){
+                    int wind_percent {std::stoi(second_layer_elements.second.data())};
+                    ui->wind_percent_md->setText(QString::number(wind_percent));
+                } else if(second_layer_elements.first == rain_percent_string){
+                    int rain_percent {std::stoi(second_layer_elements.second.data())};
+                    ui->rain_percent_md->setText(QString::number(rain_percent));
+                } else if(second_layer_elements.first == duration_string){
+                    int duration {std::stoi(second_layer_elements.second.data())};
+                    ui->duration_time_md->setText(QString::number(duration));
+                } else if(second_layer_elements.first == day_or_night_string){
+                    int index {ui->day_or_night_ld->findText(QString::fromStdString(second_layer_elements.second.data()))};
+                    ui->day_or_night_md->setCurrentIndex(index);
+                } else if(second_layer_elements.first == external_manipulation_string){
+                    ui->external_mani_md->setText(QString::fromStdString(second_layer_elements.second.data()));
+                }
             }
-            QString arrival_airport {get_full_airport_name(matches3[2])};
-            if(arrival_airport != nullptr){
-                int arrival_index {ui->departure_airport->findText(arrival_airport)};
-                ui->arrival_airport->setCurrentIndex(arrival_index);
-            }else{
-                okay = false;
+        } else if(element_name == high_difficulty){
+            for(pt::ptree::value_type &second_layer_elements : root.get_child(element_name)){
+                if(second_layer_elements.first == wind_percent_string){
+                    int wind_percent {std::stoi(second_layer_elements.second.data())};
+                    ui->wind_percent_hd->setText(QString::number(wind_percent));
+                } else if(second_layer_elements.first == rain_percent_string){
+                    int rain_percent {std::stoi(second_layer_elements.second.data())};
+                    ui->rain_percent_hd->setText(QString::number(rain_percent));
+                } else if(second_layer_elements.first == duration_string){
+                    int duration {std::stoi(second_layer_elements.second.data())};
+                    ui->duration_time_hd->setText(QString::number(duration));
+                } else if(second_layer_elements.first == day_or_night_string){
+                    int index {ui->day_or_night_ld->findText(QString::fromStdString(second_layer_elements.second.data()))};
+                    ui->day_or_night_hd->setCurrentIndex(index);
+                } else if(second_layer_elements.first == external_manipulation_string){
+                    ui->external_mani_hd->setText(QString::fromStdString(second_layer_elements.second.data()));
+                }
             }
-        } else if(str == low_difficulty.toStdString() || str == moderate_difficulty.toStdString() || str == high_difficulty.toStdString() || str == insert_tlx.toStdString()){
-            add_buttons_to_list(QString::fromStdString(str));
-        } else{
-            QString custom_msg = QString::fromStdString("This line is not recognized "+str);
-            send_message(custom_msg);
-            okay = false;
-            break;
+        } else if(element_name == departure_airport_string){
+            for(pt::ptree::value_type &second_layer_elements : root.get_child(element_name)){
+                if(second_layer_elements.first == airport_code_string){
+                    std::string departure_airport {get_full_airport_name(second_layer_elements.second.data())};
+                    if(!departure_airport.empty()){
+                        int depart_index {ui->departure_airport->findText(QString::fromStdString(departure_airport))};
+                        ui->departure_airport->setCurrentIndex(depart_index);
+                    } else {
+                                std::cout << "Airport Code not found: " << second_layer_elements.second.data() << std::endl;
+                            }
+
+                } /*else if(second_layer_elements.first == airport_height_string){
+                    If you wanna do anything with height in the future
+
+                }*/
+            }
+        } else if(element_name == arrival_airport_string){
+            for(pt::ptree::value_type &second_layer_elements : root.get_child(element_name)){
+                if(second_layer_elements.first == airport_code_string){
+                    std::string arrival_airport {get_full_airport_name(second_layer_elements.second.data())};
+                    if(!arrival_airport.empty()){
+                        int arrival_index {ui->departure_airport->findText(QString::fromStdString(arrival_airport))};
+                        ui->arrival_airport->setCurrentIndex(arrival_index);
+                    } else {
+                                std::cout << "Airport Code not found: " << second_layer_elements.second.data() << std::endl;
+                            }
+
+                } /*else if(second_layer_elements.first == airport_height_string){
+                    If you wanna do anything with height in the future
+
+                }*/
+            }
+        }  else if(element_name == action_list_string){
+            for(pt::ptree::value_type &second_layer_elements : root.get_child(element_name)){
+                add_buttons_to_list(QString::fromStdString(second_layer_elements.second.data()));
+            }
+
         }
     }
-    if(okay){
-        QString custom_msg = QString::fromStdString("Conf File loaded successfully");
-        send_message(custom_msg);} else{
-        QString custom_msg = QString::fromStdString("Errors Occured. Couldn't load file. Check if all default arguments are same");
-        send_message(custom_msg);
-    }
+
+
 }

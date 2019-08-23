@@ -30,6 +30,6 @@ add_executable(qt_xplane_test
         ${project_headers})
 target_link_libraries(qt_xplane_test Qt5::Core Qt5::Gui Qt5::Widgets ${Boost_FILESYSTEM_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}
-        ${Boost_REGEX_LIBRARY})
+        ${Boost_REGEX_LIBRARY} ${BOOST_LIBRARIES})
 
 

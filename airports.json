@@ -1,0 +1,68 @@
+{
+  "Aspen-Pitkin County Airport (Aspen, Colorado)" :
+  {
+    "Airport_Code": "KASE",
+    "Airport_Base_Height": 7820
+  },
+
+  "Bert Mooney Airport (Butte, Montana)" :
+  {
+    "Airport_Code": "KBTM",
+    "Airport_Base_Height": 5550
+  },
+
+  "Yellowstone Regional Airport (Cody, Wyoming)" :
+  {
+    "Airport_Code": "KCOD",
+    "Airport_Base_Height": 5102
+  },
+  
+  "Reagan National Airport (Washington DC)" :
+  {
+    "Airport_Code": "KDCA",
+    "Airport_Base_Height": 15
+  },
+
+
+  "Juneau International Airport (Juneau, Alaska)" :
+  {
+    "Airport_Code": "PAJN",
+    "Airport_Base_Height": 25
+  },
+
+
+  "Mammoth Yosemite Airport (Mammoth Lakes, California)" :
+  {
+    "Airport_Code": "KMMH",
+    "Airport_Base_Height": 7129
+  },
+
+
+  "San Diego International Airport (San Diego, California)" :
+  {
+    "Airport_Code": "KSAN",
+    "Airport_Base_Height": 17
+  },
+
+
+  "Telluride Regional Airport (Telluride, Colorado)" :
+  {
+    "Airport_Code": "KTEX",
+    "Airport_Base_Height": 9078
+  },
+
+
+  "Seattle–Tacoma International Airport (Seattle, Washington)" :
+  {
+    "Airport_Code": "KSEA",
+    "Airport_Base_Height": 433
+  },
+
+
+  "Bullhead International Airport (Bullhead City, Arizona)" :
+    {
+      "Airport_Code": "KIFP",
+      "Airport_Base_Height": 695
+    }
+
+}

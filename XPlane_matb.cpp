@@ -17,6 +17,8 @@
 #include "rest_dialog.h"
 #define BOOST_FILESYSTEM_NO_DEPRECATED
 #include <boost/filesystem.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
 #define PORT 50000
 #define DTTMFMT "%Y-%m-%d %H:%M:%S"
 #define DTTMSZ 21
@@ -35,10 +37,23 @@
 #ifndef XPLM300
 #error This is made to be compiled against the XPLM300 SDK
 #endif
+// Namespaces
+namespace pt = boost::property_tree;
+// Start Global Static Variables
+static std::string wind_percent_string {"Wind_Percent"};
+static std::string rain_percent_string {"Rain_Percent"};
+static std::string duration_string {"Duration"};
+static std::string day_or_night_string {"Day_or_Night"};
+static std::string external_manipulation_string {"External_Manipulation"};
+static std::string departure_airport_string {"Departure_Airport"};
+static std::string arrival_airport_string {"Arrival_Airport"};
+static std::string airport_code_string {"Airport_Code"};
+static std::string airport_height_string {"Airport_Base_Height"};
+static std::string action_list_string {"Actions_List"};
+std::string homeDir;
 static XPLMKeyFlags	gFlags = 0;
 static char	gVirtualKey = 0;
 static char	gChar = 0;
-std::string homedir;
 static std::vector<std::string> actions;
 std::string low_difficulty {"Low Difficulty"};
 std::string moderate_difficulty {"Moderate Difficulty"};
@@ -48,7 +63,7 @@ bool rest_next {false};
 int rain_ld, wind_ld, duration_ld, rain_md, wind_md, duration_md, rain_hd, wind_hd, duration_hd;
 std::string day_night_ld, day_night_md, day_night_hd;
 std::string external_manipulation_ld, external_manipulation_md, external_manipulation_hd;
-const float min_cruise_height {500};
+float min_cruise_height;
 int start_sim_immediately {10000};
 static std::fstream log_file;
 std::string plugin_log_file {""};
@@ -89,8 +104,8 @@ PLUGIN_API int XPluginStart(
     plugin_log_file += getDtTm(buff);
     plugin_log_file += "_" + current_config_file + ".log";
     log_file.open(plugin_log_file, std::fstream::in | std::fstream::out | std::fstream::app);
-    homedir = getenv("HOME");
-    homedir += "/";
+    homeDir = getenv("HOME");
+    homeDir += "/";
     if (!log_file )
     {
         std::cout << "Cannot open file, file does not exist. Creating new file..";
@@ -120,88 +135,84 @@ PLUGIN_API void XPluginReceiveMessage(XPLMPluginID inFrom, int inMsg, void * inP
 void set_airport(){
     std::ifstream in(current_config_file);
     if (!in.good()){
-        std::cout << "Unable to read file" << std::endl;
+        std::cout << "Unable to read file for airport data: "<< current_config_file << std::endl;
     }
-    std::string str;
+    pt::ptree root;
+    pt::read_json(current_config_file, root);
+    for (pt::ptree::value_type &each_element : root) {
+        std::string element_name = each_element.first;
+        if (element_name == departure_airport_string) {
+            for (pt::ptree::value_type &second_layer_elements : root.get_child(element_name)) {
+                if (second_layer_elements.first == airport_code_string) {
+                    departing_airport = second_layer_elements.second.data();
 
-    std::regex rgx3("Departure airport is (.*), Arrival airport is (.*)");
-    std::smatch matches3;
+                } else if(second_layer_elements.first == airport_height_string){
+                        min_cruise_height = std::stoi(second_layer_elements.second.data()) + 500;
 
-    while (std::getline(in, str)) {
-        if (!str.empty()) {
-            if(std::regex_search(str, matches3, rgx3)){
-                departing_airport = matches3[1];
+                }
             }
-
         }
     }
 }
 
 void add_actions(){
-    std::ifstream in(current_config_file);
-    if (!in.good()){
-        std::cout << "Unable to read file" << std::endl;
-    }
-    std::string str;
-    std::regex rgx("((l|m|h)d) Rain % is (\\d*) Wind % is (\\d*) for (\\d*) seconds Time of the day is (Day|Night) External Manipulation : (.*)");
-    std::smatch matches;
 
-    std::regex rgx2("Rest duration is: (\\d+)");
-    std::smatch matches2;
-
-    std::regex rgx3("Departure airport is (.*), Arrival airport is (.*)");
-    std::smatch matches3;
-
-    while (std::getline(in, str)) {
-        if (!str.empty()) {
-            if(std::regex_search(str, matches, rgx)){
-                if(matches[1] == "ld"){
-                    rain_ld = std::stoi(matches[3]);
-                    wind_ld = std::stoi(matches[4]);
-                    duration_ld = std::stoi(matches[5]);
-                    day_night_ld = matches[6];
-                    external_manipulation_ld = matches[7];
-                } else if(matches[1] == "md"){
-                    rain_md = std::stoi(matches[3]);
-                    wind_md = std::stoi(matches[4]);
-                    duration_md = std::stoi(matches[5]);
-                    day_night_md = matches[6];
-                    external_manipulation_md = matches[7];
-                } else if(matches[1] == "hd"){
-                    rain_hd = std::stoi(matches[3]);
-                    wind_hd = std::stoi(matches[4]);
-                    duration_hd = std::stoi(matches[5]);
-                    day_night_hd = matches[6];
-                    external_manipulation_hd = matches[7];
-                }
-            } else if(std::regex_search(str, matches2, rgx2)){
-                rest_time = std::stoi(matches2[1]);
-            } else if(std::regex_search(str, matches3, rgx3)){
-                departing_airport = matches3[1];
-            } else{
-                if(str == low_difficulty || str == moderate_difficulty || str == high_difficulty || str == insert_tlx){
-                    if(str == low_difficulty){
-                        actions.push_back(low_difficulty);
-//                        change_weather(rain_ld, wind_ld, duration_ld, day_night_ld);
-
-                    } else if(str == moderate_difficulty){
-                        actions.push_back(moderate_difficulty);
-//                        change_weather(rain_md, wind_md, duration_md, day_night_md);
-
-                    } else if(str == high_difficulty){
-                        actions.push_back(high_difficulty);
-//                        change_weather(rain_hd, wind_hd, duration_hd, day_night_hd);
-
-                    } else if(str == insert_tlx){
-                        actions.push_back(insert_tlx);
-                    } else{
-                        std::cout << "Only God knows what this string is: " << str << std::endl;
-                    }
-                } else{
-                    std::cout << "The config file doesn't match requirements" << std::endl;
+    std::string filename_in_stdstring = current_config_file;
+    pt::ptree root;
+    pt::read_json(filename_in_stdstring, root);
+    for (pt::ptree::value_type &each_element : root) {
+        std::string element_name = each_element.first;
+        if(element_name == low_difficulty){
+            for(pt::ptree::value_type &second_layer_elements : root.get_child(element_name)){
+                if(second_layer_elements.first == wind_percent_string){
+                    int wind_percent {std::stoi(second_layer_elements.second.data())};
+                    wind_ld = wind_percent;
+                } else if(second_layer_elements.first == rain_percent_string){
+                    int rain_percent {std::stoi(second_layer_elements.second.data())};
+                    rain_ld = rain_percent;
+                } else if(second_layer_elements.first == duration_string){
+                    int duration {std::stoi(second_layer_elements.second.data())};
+                    duration_ld = duration;
+                } else if(second_layer_elements.first == day_or_night_string){
+                    day_night_ld = second_layer_elements.second.data();
+                } else if(second_layer_elements.first == external_manipulation_string){
+                    external_manipulation_ld = second_layer_elements.second.data();
                 }
             }
-
+        } else if(element_name == moderate_difficulty){
+            for(pt::ptree::value_type &second_layer_elements : root.get_child(element_name)){
+                if(second_layer_elements.first == wind_percent_string){
+                    int wind_percent {std::stoi(second_layer_elements.second.data())};
+                    wind_md = wind_percent;
+                } else if(second_layer_elements.first == rain_percent_string){
+                    int rain_percent {std::stoi(second_layer_elements.second.data())};
+                    rain_md = rain_percent;
+                } else if(second_layer_elements.first == duration_string){
+                    int duration {std::stoi(second_layer_elements.second.data())};
+                    duration_md = duration;
+                } else if(second_layer_elements.first == day_or_night_string){
+                    day_night_md = second_layer_elements.second.data();
+                } else if(second_layer_elements.first == external_manipulation_string){
+                    external_manipulation_md = second_layer_elements.second.data();
+                }
+            }
+        } else if(element_name == high_difficulty){
+            for(pt::ptree::value_type &second_layer_elements : root.get_child(element_name)){
+                if(second_layer_elements.first == wind_percent_string){
+                    int wind_percent {std::stoi(second_layer_elements.second.data())};
+                    wind_hd = wind_percent;
+                } else if(second_layer_elements.first == rain_percent_string){
+                    int rain_percent {std::stoi(second_layer_elements.second.data())};
+                    rain_hd = rain_percent;
+                } else if(second_layer_elements.first == duration_string){
+                    int duration {std::stoi(second_layer_elements.second.data())};
+                    duration_hd = duration;
+                } else if(second_layer_elements.first == day_or_night_string){
+                    day_night_hd = second_layer_elements.second.data();
+                } else if(second_layer_elements.first == external_manipulation_string){
+                    external_manipulation_hd = second_layer_elements.second.data();
+                }
+            }
         }
     }
 }
@@ -358,7 +369,7 @@ float DefaultAircraftLoopCB(float elapsedMe, float elapsedSim, int counter, void
 }
 
 std::string get_config_file(){
-    const std::string &extension = ".conf";
+    const std::string &extension = ".json";
     const std::string path {"."};
     boost::filesystem::path dir(path);
     if(boost::filesystem::exists(path) && boost::filesystem::is_directory(path)){
