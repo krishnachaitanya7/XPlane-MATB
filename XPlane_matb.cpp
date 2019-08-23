@@ -77,7 +77,7 @@ std::string thank_you_note {"Thank you for your participation"};
 void add_actions();
 int send_thankyou(std::string &send_msg);
 void set_airport();
-void change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night);
+void change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night, std::string difficulty_level);
 static char *getDtTm (char *buff);
 void write_to_log(std::string &write_text);
 void write_to_log(std::string &&write_text);
@@ -269,17 +269,17 @@ int MyKeySniffer(
                 if (present_action == low_difficulty) {
                     write_to_log(low_difficulty + " External Manipulation: "+external_manipulation_ld);
                     std::cout << "Changing weather to: " << low_difficulty + " External Manipulation: "+external_manipulation_ld << std::endl;
-                    change_weather(rain_ld, wind_ld, duration_ld, day_night_ld);
+                    change_weather(rain_ld, wind_ld, duration_ld, day_night_ld, low_difficulty);
                     rest_next = !(actions.front() == insert_tlx);
                 } else if (present_action == moderate_difficulty) {
                     write_to_log(moderate_difficulty + " External Manipulation: "+external_manipulation_md);
                     std::cout << "Changing weather to: " << moderate_difficulty + " External Manipulation: "+external_manipulation_md << std::endl;
-                    change_weather(rain_md, wind_md, duration_md, day_night_md);
+                    change_weather(rain_md, wind_md, duration_md, day_night_md, moderate_difficulty);
                     rest_next = !(actions.front() == insert_tlx);
                 } else if (present_action == high_difficulty) {
                     write_to_log(high_difficulty + " External Manipulation: "+external_manipulation_hd);
                     std::cout << "Changing weather to: " << high_difficulty + " External Manipulation: "+external_manipulation_hd << std::endl;
-                    change_weather(rain_hd, wind_hd, duration_hd, day_night_hd);
+                    change_weather(rain_hd, wind_hd, duration_hd, day_night_hd, high_difficulty);
                     rest_next = !(actions.front() == insert_tlx);
                 } else if (present_action == insert_tlx) {
                     write_to_log(insert_tlx);
@@ -364,18 +364,23 @@ void sleep_for_me(int &duration){
 
 }
 
-void change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night){
+void change_weather(int &rain, int &wind, int &duration_time, std::string &day_or_night, std::string difficulty_level){
     float rain_percent = (float)rain / (float)100;
     float wind_percent = (float)wind / (float)100;
     XPLMSetDataf(XPLMFindDataRef("sim/weather/rain_percent"), rain_percent);
     XPLMSetDataf(XPLMFindDataRef("sim/weather/thunderstorm_percent"), wind_percent);
-    XPLMSetDatai(XPLMFindDataRef("sim/weather/cloud_type[0]"), 5);
+    if(difficulty_level == low_difficulty){
+        XPLMSetDatai(XPLMFindDataRef("sim/weather/cloud_type[0]"), 1);
+    } else if(difficulty_level == moderate_difficulty){
+        XPLMSetDatai(XPLMFindDataRef("sim/weather/cloud_type[0]"), 2);
+    } else if(difficulty_level == high_difficulty){
+        XPLMSetDatai(XPLMFindDataRef("sim/weather/cloud_type[0]"), 5);
+    }
     if(day_or_night == "Day"){
         XPLMSetDataf(XPLMFindDataRef("sim/time/zulu_time_sec"), 69744.0);
     } else{
         XPLMSetDataf(XPLMFindDataRef("sim/time/zulu_time_sec"), 30000.0);
     }
-
     sleep_for_me(duration_time);
 }
 
