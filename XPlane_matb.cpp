@@ -283,7 +283,7 @@ int MyKeySniffer(
                     rest_next = !(actions.front() == insert_tlx);
                 } else if (present_action == insert_tlx) {
                     write_to_log(insert_tlx);
-                    std::cout << "Please Complete the Survey" << std::endl;
+                    std::cout << "Please Complete the Survey (Press Shift+P to Un-Pause the XPlane)" << std::endl;
                     XPLMCommandOnce(XPLMFindCommand("sim/operation/pause_toggle"));
                 }
             } else {
