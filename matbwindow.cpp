@@ -27,6 +27,7 @@ static QWidget *my_button_window;
 static QPushButton *last_clicked_button {nullptr};
 static std::map<std::string, std::string> airports_codes_map;
 static std::map<std::string, int> airports_altitude_map;
+static std::string height_from_base_to_start_manipulation {"Manipulation_Begin_Height"};
 static std::string arrival_port_default {"Select Arrival Airport"};
 static std::string departure_port_default {"Select Departure Airport"};
 static std::string wind_percent_string {"Wind_Percent"};
@@ -278,6 +279,8 @@ void MATBWindow::on_Gen_script_clicked(){
     pt::ptree write_file_root;
     // Write Rest String
     write_file_root.put(rest_string, ui->duration_time_rest->toPlainText().toUtf8().constData());
+    // Write Manipulation height start string
+    write_file_root.put(height_from_base_to_start_manipulation, ui->manipulation_height->currentText().toUtf8().constData());
     // Write Low difficulty JSON
     write_file_root.put(low_difficulty+"."+wind_percent_string, std::stoi(ui->wind_percent_ld->toPlainText().toUtf8().constData()));
     write_file_root.put(low_difficulty+"."+rain_percent_string, std::stoi(ui->rain_percent_ld->toPlainText().toUtf8().constData()));
@@ -435,6 +438,9 @@ void MATBWindow::load_file_clicked(QAction* test){
     }
     // Set Rest
     ui->duration_time_rest->setText(QString::number(root.get<int>(rest_string, -1)));
+    // Set Manipulation Height
+    int index {ui->manipulation_height->findText(QString::number(root.get<int>(height_from_base_to_start_manipulation, 0)))};
+    ui->manipulation_height->setCurrentIndex(index);
 
 
 }

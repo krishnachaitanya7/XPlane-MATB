@@ -57,6 +57,7 @@ static XPLMKeyFlags	gFlags = 0;
 static char	gVirtualKey = 0;
 static char	gChar = 0;
 static std::vector<std::string> actions;
+static std::string height_from_base_to_start_manipulation {"Manipulation_Begin_Height"};
 std::string low_difficulty {"Low Difficulty"};
 std::string moderate_difficulty {"Moderate Difficulty"};
 std::string high_difficulty {"High Difficulty"};
@@ -151,6 +152,7 @@ void set_airport(){
     }
     pt::ptree root;
     pt::read_json(current_config_file, root);
+    int manipulation_start_height = root.get<int>(height_from_base_to_start_manipulation, 500);
     for (pt::ptree::value_type &each_element : root) {
         std::string element_name = each_element.first;
         if (element_name == departure_airport_string) {
@@ -159,7 +161,15 @@ void set_airport(){
                     departing_airport = second_layer_elements.second.data();
 
                 } else if(second_layer_elements.first == airport_height_string){
-                        min_cruise_height = std::stoi(second_layer_elements.second.data()) + 500;
+                        if(manipulation_start_height == 0){
+                            // Rather than entering every accurate height detail into json, just remove 100
+                            // So that everything would start immediately and turn into Chaos
+                            min_cruise_height = std::stoi(second_layer_elements.second.data()) - 100;
+                        }
+                        else{
+                            min_cruise_height = std::stoi(second_layer_elements.second.data()) + manipulation_start_height;
+                        }
+
 
                 }
             }
