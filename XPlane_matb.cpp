@@ -379,6 +379,7 @@ void change_weather(int &rain, int &wind, int &duration_time, std::string &day_o
     float wind_percent = (float)wind / (float)100;
     XPLMSetDataf(XPLMFindDataRef("sim/weather/rain_percent"), rain_percent);
     XPLMSetDataf(XPLMFindDataRef("sim/weather/thunderstorm_percent"), wind_percent);
+    XPLMSetDataf(XPLMFindDataRef("sim/weather/wind_speed_kt[0]"), (float)wind);
     if(difficulty_level == low_difficulty){
         XPLMSetDatai(XPLMFindDataRef("sim/weather/cloud_type[0]"), 1);
     } else if(difficulty_level == moderate_difficulty){
