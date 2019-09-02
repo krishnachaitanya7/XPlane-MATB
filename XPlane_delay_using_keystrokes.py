@@ -31,6 +31,7 @@ def delay_for_me(duration):
 
 
 if __name__ == "__main__":
+    #ToDo: Change from pyautogui to xdotool to allow multitasking
     pyautogui.FAILSAFE = False
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind(('localhost', 50000))
